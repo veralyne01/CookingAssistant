@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="CookingAssistant/CookingAssistant.vcxproj" />
+  <Project Path="CookingAssistant/CookingAssistant.vcxproj" Id="04e8221a-180e-41d9-ba5e-6acb56f53540" />
 </Solution>
