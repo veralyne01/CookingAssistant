@@ -23,9 +23,9 @@ const std::vector<std::string> VEGAN_BAD = { "Milk","Butter","Ghee","Double Crea
 const std::vector<Group> DIETS = {
 	{"All", {}, {}},
 	{"Vegetarian ", VEG_BAD, {"Beef","Chicken","Pork","Lamb","Goat","Seafood"}},
-	{"Веган", [] { auto v = VEG_BAD; v.insert(v.end(), VEGAN_BAD.begin(), VEGAN_BAD.end()); return v; }(), {"Beef","Chicken","Pork","Lamb","Goat","Seafood"}},
-	{"Без свинины", {"Pork","Pork Chops","Bacon","Pancetta","Ham","Gammon","Prosciutto","Salami","Pepperoni","Chorizo","Sausages","Lard","Black Pudding","Gelatine"}, {"Pork"}},
-	{"Без говядины", {"Beef","Minced Beef","Beef Brisket","Beef Fillet","Beef Shin","Beef Stock","Beef Gravy","Oxtail","Veal"}, {"Beef"}},
+	{"Vegan", [] { auto v = VEG_BAD; v.insert(v.end(), VEGAN_BAD.begin(), VEGAN_BAD.end()); return v; }(), {"Beef","Chicken","Pork","Lamb","Goat","Seafood"}},
+	{"No pork", {"Pork","Pork Chops","Bacon","Pancetta","Ham","Gammon","Prosciutto","Salami","Pepperoni","Chorizo","Sausages","Lard","Black Pudding","Gelatine"}, {"Pork"}},
+	{"No beef", {"Beef","Minced Beef","Beef Brisket","Beef Fillet","Beef Shin","Beef Stock","Beef Gravy","Oxtail","Veal"}, {"Beef"}},
 };
 
 const std::vector<Group> CUISINES = {    
