@@ -4,10 +4,10 @@
 #include "user.h"
 #include <fstream>
 #include <iostream>
-double User::count_appr_calories(double weight, double height, int age, Gender gender, Activity_level level) {
-	double res = 10 * weight + 6.25 * height - 5 * age + 5;
-	if (gender == Gender::female) return (res - 166) * choose_coef(level);
-	return res * choose_coef(level);
+double User::count_appr_calories(User user) {
+	double res = 10 * user.weight + 6.25 * user.height * 100 - 5 * user.age + 5;
+	if (user.gender == Gender::female) return (res - 166) * choose_coef(user.activity_level);
+	return res * choose_coef(user.activity_level);
 }
 double User::choose_coef(Activity_level level) {
 	switch (level) {
@@ -20,8 +20,9 @@ double User::choose_coef(Activity_level level) {
 	}
 }
 //целевой калораж 
-double User::count_target_calories(double prop_calories, Target target, Activity_level level) {
-	if (target == Target::weight_loss) return 0.85 * prop_calories;
-	else if (target == Target::weight_gain) return 1.15 * prop_calories;
+double User::count_target_calories(User user) {
+	double prop_calories = count_appr_calories(user);
+	if (user.target == Target::weight_loss) return 0.85 * prop_calories;
+	else if (user.target == Target::weight_gain) return 1.15 * prop_calories;
 	else return prop_calories;
 }

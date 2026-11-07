@@ -16,7 +16,6 @@ void UI::fill_gender(User& user) {
 	else if (g == 'F' || g == 'f') user.gender = Gender::female;
 	else { 
 		std::cout << "Invalid input! Please, try again\n";
-		std::cin >> g;
 		fill_gender(user); 
 	}
 }
@@ -93,9 +92,9 @@ void UI::fill_height(User & user) {
 
 void UI::fill_age(User& user) {
 	system("cls");
-	const double min_age = 1.0;
-	const double max_age = 100;
-	double value;
+	const int min_age = 1;
+	const int max_age = 100;
+	int value;
 
 	while (true) {
 		std::cout << "Enter your age:\n> ";
@@ -114,6 +113,73 @@ void UI::fill_age(User& user) {
 			continue;
 		}
 		user.age = value;
+		return;
+	}
+}
+void UI::fill_activity_level(User& user) {
+	system("cls");
+	char t;
+	std::cout << "Choose your activity level:\n1. I do desk work and don't go to workouts\n2. I go to moderate-intensity workouts 1-2 times a week\n" <<
+		 "3. I go to moderate-intensity workouts 3-5 times a week\n4. I train intensely almost every day or do physical labor\n" << 
+		"5. I train every day and work in a physically demanding job\n" << "> ";
+	std::cin >> t;
+	if (t == '1') user.activity_level = Activity_level::no_activity;
+	else if (t == '2') user.activity_level = Activity_level::light_exertion;
+	else if (t == '3') user.activity_level = Activity_level::regular_workouts;
+	else if (t == '4') user.activity_level = Activity_level::frequent_workouts;
+	else if (t == '5') user.activity_level = Activity_level::hard_work;
+	else fill_activity_level(user);
+}
+
+void UI::ask_calorie_norm(User& user) {
+	int cal = User::count_target_calories(user);
+	std::cout << "\nSuggested calorie norm: " << cal << ". Would you like to change it (Y/N)?\n> ";
+	char g;
+	std::cin >> g;
+	if (g == 'Y' || g == 'y') fill_calorie_norm(user, cal);
+	else if (g == 'N' || g == 'n') {
+		user.calorie_norm = cal;
+		std::cout << "Calorie norm saved!\n";
+	}
+	else {
+		std::cout << "Invalid input! Please, try again\n";
+		std::cin >> g;
+		ask_calorie_norm(user);
+	}
+}
+
+void UI::fill_calorie_norm(User& user, int cal) {
+	system("cls");
+	int value;
+
+	while (true) {
+		std::cout << "Enter calorie norm:\n> ";
+		if (!(std::cin >> value)) {
+			if (std::cin.eof()) return;
+			std::cin.clear();
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			std::cout << "Invalid input! Please, try again\n";
+			continue;
+		}
+
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+		if (value < cal) {
+			std::cout << "An excessively low daily calorie intake can have a negative impact on your health. Do you really want to continue (Y/N)?\n";
+			char g;
+			std::cin >> g;
+			if (g == 'Y' || g == 'y') user.calorie_norm = value;
+			else if (g == 'N' || g == 'n') continue;
+			else {
+				std::cout << "Invalid input! Please, try again\n";
+				continue;
+			}
+		}
+		if (value <= 0) {
+			std::cout << "Invalid input! Please, try again\n";
+			continue;
+		}
+		user.calorie_norm = value;
 		return;
 	}
 }
@@ -158,16 +224,19 @@ void UI::profile_menu(User& user) {
 	system("cls");
 	ProfileManager::read_user_from_file(user);
 	std::cout << "------------\n MY PROFILE\n------------\n";
-	std::cout << "Name:\t";
+	std::cout << "Name:\t\t";
 	(user.name.find_first_not_of(" \n\t\r") == std::string::npos) ? std::cout << "-\n" : std::cout << user.name << "\n";
-	std::cout << "Age:\t";
+	std::cout << "Age:\t\t";
 	(user.age == 0) ? std::cout << "-\n" : std::cout << user.age << "\n";
-	std::cout << "Gender:\t" << ProfileManager::parse_gender(user.gender) << "\n";
-	std::cout << "Weight:\t";
+	std::cout << "Gender:\t\t" << ProfileManager::parse_gender(user.gender) << "\n";
+	std::cout << "Weight:\t\t";
 	(user.weight == 0) ? std::cout << "-\n" : std::cout << user.weight << "\n";
-	std::cout << "Height:\t";
+	std::cout << "Height:\t\t";
 	(user.height == 0) ? std::cout << "-\n" : std::cout << user.height << "\n";
-	std::cout << "Target:\t" << ProfileManager::parse_target(user.target) << "\n";
+	std::cout << "Target:\t\t" << ProfileManager::parse_target(user.target) << "\n";
+	std::cout << "Activity level:\t" << ProfileManager::parse_activity_level(user.activity_level) << "\n";
+	std::cout << "Calorie norm:\t";
+	(user.calorie_norm == 0) ? std::cout << "-\n" : std::cout << user.calorie_norm << "\n";
 }
 
 void UI::input_profile(User& user) {
@@ -177,11 +246,13 @@ void UI::input_profile(User& user) {
 	fill_weight(user);
 	fill_height(user);
 	fill_target(user);
+	fill_activity_level(user);
+	ask_calorie_norm(user);
 	ProfileManager::save_user_to_file(user);
 }
 
 void UI::edit_profile(User& user) {
-	std::cout << "Choose option to edit:\n1. Name\n2. Age\n3. Gender\n4. Weight\n5. Height\n6. Target\n";
+	std::cout << "Choose option to edit:\n1. Name\n2. Age\n3. Gender\n4. Weight\n5. Height\n6. Target\n7. Activity level\n";
 	char c;
 	std::cin >> c;
 	switch (c) {
@@ -190,18 +261,27 @@ void UI::edit_profile(User& user) {
 		break;
 	case '2':
 		fill_age(user);
+		ask_calorie_norm(user);
 		break;
 	case '3':
 		fill_gender(user);
+		ask_calorie_norm(user);
 		break;
 	case '4':
 		fill_weight(user);
+		ask_calorie_norm(user);
 		break;
 	case '5':
 		fill_height(user);
+		ask_calorie_norm(user);
 		break;
 	case '6':
 		fill_target(user);
+		ask_calorie_norm(user);
+		break;
+	case '7':
+		fill_activity_level(user);
+		ask_calorie_norm(user);
 		break;
 	default:
 		std::cout << "Invalid input! Please, try again\n";

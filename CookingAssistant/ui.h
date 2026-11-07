@@ -7,6 +7,9 @@ public:
 	static void fill_target(User& user);
 	static void fill_weight(User& user);
 	static void fill_height(User& user);
+	static void fill_activity_level(User& user);
+	static void ask_calorie_norm(User& user);
+	static void fill_calorie_norm(User& user, int cal);
 	static void menu(User& user);
 	static void profile_menu(User& user);
 	static void fill_age(User& user);

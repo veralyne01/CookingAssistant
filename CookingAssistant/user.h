@@ -13,8 +13,10 @@ public:
 	int age = 0;
 	Target target = Target::not_chosen;
 	Gender gender = Gender::not_chosen;
+	Activity_level activity_level = Activity_level::not_chosen;
+	int calorie_norm = 0;
 
-	double count_appr_calories(double weight, double height, int age, Gender gender, Activity_level level);
-	double choose_coef(Activity_level level);
-	double count_target_calories(double prop_calories, Target target, Activity_level level);
+	static double count_appr_calories(User user);
+	static double choose_coef(Activity_level level);
+	static double count_target_calories(User user);
 };
