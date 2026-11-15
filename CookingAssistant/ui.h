@@ -1,6 +1,6 @@
 #pragma once
 #include "user.h"
-class UI{
+class ProfileUI{
 public:
 	static void fill_gender(User& user);
 	static void fill_name(User& user);
@@ -16,4 +16,9 @@ public:
 	static void input_profile(User& user);
 	static void edit_profile(User& user);
 	static void profile_options(User& user);
+	static void choose_allergies(User& user);
+};
+
+class DishSuggestionUI {
+
 };

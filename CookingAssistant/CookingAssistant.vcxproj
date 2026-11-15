@@ -143,16 +143,24 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BreakfastPicker.cpp" />
     <ClCompile Include="CookingAssistant.cpp" />
     <ClCompile Include="Dishes.cpp" />
+    <ClCompile Include="DishSuggestionUI.cpp" />
+    <ClCompile Include="Parsers.cpp" />
     <ClCompile Include="ProileManager.cpp" />
     <ClCompile Include="MealDBSearch.cpp" />
     <ClCompile Include="SQLManager.cpp" />
-    <ClCompile Include="UI.cpp" />
+    <ClCompile Include="ProfileUI.cpp" />
     <ClCompile Include="User.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="breakfastpicker.h" />
+    <ClInclude Include="dishes.h" />
     <ClInclude Include="enums.h" />
+    <ClInclude Include="groups.h" />
+    <ClInclude Include="mealdbsearch.h" />
+    <ClInclude Include="parsers.h" />
     <ClInclude Include="ProfileManager.h" />
     <ClInclude Include="ui.h" />
     <ClInclude Include="user.h" />

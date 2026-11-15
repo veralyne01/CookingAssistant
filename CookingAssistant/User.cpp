@@ -4,6 +4,7 @@
 #include "user.h"
 #include <fstream>
 #include <iostream>
+#include "parsers.h"
 double User::count_appr_calories(User user) {
 	double res = 10 * user.weight + 6.25 * user.height * 100 - 5 * user.age + 5;
 	if (user.gender == Gender::female) return (res - 166) * choose_coef(user.activity_level);

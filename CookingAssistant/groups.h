@@ -50,3 +50,4 @@ const std::vector<Group> FAVORITES = {
 	{"Pasta and cereals", {}, {"Pasta"}},
 	{"Sweet", {}, {"Dessert"}},
 };
+
