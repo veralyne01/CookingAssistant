@@ -10,6 +10,7 @@
 #include "user.h"
 #include <unordered_set>
 #include "breakfastpicker.h"
+#include "FoodDataCentral.h"
 
 using json = nlohmann::json;
 
@@ -108,11 +109,19 @@ namespace {
         d.instructions = text(m, "strInstructions");
 
         for (int i = 1; i <= 20; ++i) {
-            const std::string ing = trim(text(m, "strIngredient" + std::to_string(i)));
+            const std::string ing =
+                trim(text(m, "strIngredient" + std::to_string(i)));
+
             if (ing.empty()) continue;
-            d.ingredients.push_back(ing);
-            d.measures.push_back(trim(text(m, "strMeasure" + std::to_string(i))));
+
+            Ingredient ingredient;
+            ingredient.name = ing;
+            ingredient.measure =
+                trim(text(m, "strMeasure" + std::to_string(i)));
+
+            d.ingredients.push_back(ingredient);
         }
+
         return d;
     }
 
@@ -181,14 +190,47 @@ namespace MealDB {
         std::cout << "\nINGREDIENTS:\n";
 
         for (size_t i = 0; i < dish->ingredients.size(); ++i) {
-            std::cout << " - " << dish->ingredients[i];
+            std::cout << " - " << dish->ingredients[i].name;
 
-            if (i < dish->measures.size() &&
-                !dish->measures[i].empty()) {
-                std::cout << " — " << dish->measures[i];
+            if (i < dish->ingredients.size() &&
+                !dish->ingredients[i].measure.empty()) {
+                std::cout << " — " << dish->ingredients[i].measure;
             }
 
             std::cout << "\n";
+        }
+        FoodDataCentral::calculate_dish(*dish);
+        std::cout << "\nNUTRITION:\n";
+
+        std::cout << "Calories: "
+            << dish->total_nutrition.calories << " kcal\n";
+
+        std::cout << "Proteins: "
+            << dish->total_nutrition.proteins << " g\n";
+
+        std::cout << "Fats: "
+            << dish->total_nutrition.fats << " g\n";
+
+        std::cout << "Carbohydrates: "
+            << dish->total_nutrition.carbohydrates << " g\n";
+
+        std::cout << "\nPer serving (" << dish->servings << "):\n";
+
+        std::cout << "Calories: "
+            << dish->nutrition_per_serving.calories << " kcal\n";
+
+        std::cout << "Proteins: "
+            << dish->nutrition_per_serving.proteins << " g\n";
+
+        std::cout << "Fats: "
+            << dish->nutrition_per_serving.fats << " g\n";
+
+        std::cout << "Carbohydrates: "
+            << dish->nutrition_per_serving.carbohydrates << " g\n";
+
+        if (!dish->nutrition_complete) {
+            std::cout << "\nWarning: nutrition data is incomplete. "
+                << "Some ingredients could not be calculated.\n";
         }
 
         // INSTRUCTIONS
@@ -204,5 +246,5 @@ namespace MealDB {
         std::cout << "\n========================================\n";
     }
 
-
+    
 }

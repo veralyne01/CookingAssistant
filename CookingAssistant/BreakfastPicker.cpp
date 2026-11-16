@@ -46,7 +46,7 @@ bool Breakfast::is_allowed(const Dish& dish, const std::vector<std::string>& ban
     if (dish.ingredients.empty()) return false;
     for (const auto& ingredient : dish.ingredients) {
         for (const auto& word : banned) {
-            if (contains_ci(ingredient, word)) return false;
+            if (contains_ci(ingredient.name, word)) return false;
         }
     }
     return true;
@@ -56,7 +56,7 @@ double Breakfast::score(const Dish& dish, const User& user) {
     double result = 0.0;
     for (const auto& liked : user.liked_products) {
         for (const auto& ingredient : dish.ingredients) {
-            if (contains_ci(ingredient, liked)) {
+            if (contains_ci(ingredient.name, liked)) {
                 result += 1.0;
                 break; // один любимый продукт считаем один раз
             }

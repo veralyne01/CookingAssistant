@@ -147,6 +147,9 @@
     <ClCompile Include="CookingAssistant.cpp" />
     <ClCompile Include="Dishes.cpp" />
     <ClCompile Include="DishSuggestionUI.cpp" />
+    <ClCompile Include="FoodDataCentral.cpp" />
+    <ClCompile Include="MeasureConverter.cpp" />
+    <ClCompile Include="NutritionCalculator.cpp" />
     <ClCompile Include="Parsers.cpp" />
     <ClCompile Include="ProileManager.cpp" />
     <ClCompile Include="MealDBSearch.cpp" />
@@ -158,8 +161,11 @@
     <ClInclude Include="breakfastpicker.h" />
     <ClInclude Include="dishes.h" />
     <ClInclude Include="enums.h" />
+    <ClInclude Include="FoodDataCentral.h" />
     <ClInclude Include="groups.h" />
     <ClInclude Include="mealdbsearch.h" />
+    <ClInclude Include="MeasureConverter.h" />
+    <ClInclude Include="NutritionCalculator.h" />
     <ClInclude Include="parsers.h" />
     <ClInclude Include="ProfileManager.h" />
     <ClInclude Include="ui.h" />
