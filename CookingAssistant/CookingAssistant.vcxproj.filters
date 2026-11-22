@@ -24,9 +24,6 @@
     <ClCompile Include="SQLManager.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Dishes.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="ProfileUI.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
@@ -42,7 +39,7 @@
     <ClCompile Include="DishSuggestionUI.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="BreakfastPicker.cpp">
+    <ClCompile Include="Picker.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="NutritionCalculator.cpp">
@@ -52,6 +49,15 @@
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="MeasureConverter.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Reasoner.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Auxiliary.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -80,7 +86,7 @@
     <ClInclude Include="mealdbsearch.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="breakfastpicker.h">
+    <ClInclude Include="picker.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="NutritionCalculator.h">
@@ -90,6 +96,12 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="MeasureConverter.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Reasoner.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Auxiliary.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

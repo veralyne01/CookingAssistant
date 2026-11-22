@@ -42,29 +42,8 @@ namespace NutritionCalculator {
         return total;
     }
 
-    Nutrition calculate_per_serving(
-        const Nutrition& total,
-        int servings
-    ) {
-        if (servings <= 0)
-            return {};
-
-        return {
-            total.calories / servings,
-            total.proteins / servings,
-            total.fats / servings,
-            total.carbohydrates / servings
-        };
-    }
-
     void calculate_dish(Dish& dish) {
         dish.total_nutrition = calculate_total(dish.ingredients);
-
-        dish.nutrition_per_serving =
-            calculate_per_serving(
-                dish.total_nutrition,
-                dish.servings
-            );
 
         dish.nutrition_complete = true;
 

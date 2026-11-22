@@ -6,7 +6,7 @@
 #include "dishes.h"
 #include "user.h"
 
-namespace Breakfast {
+namespace Picker {
 
     // Жёсткий фильтр: false, если среди ингредиентов есть что-то из banned
     // (без учёта регистра, по части слова: "peanut" найдёт "Peanut Butter").
@@ -18,11 +18,11 @@ namespace Breakfast {
 
     // Собирает блюда, прошедшие жёсткий фильтр. already_shown пропускаются.
     std::vector<Dish> find_candidates(const User& user,
-        const std::unordered_set<std::string>& already_shown);
+        const std::unordered_set<std::string>& already_shown, std::string category);
 
     // Предлагает одно блюдо и запоминает его id в already_shown (для кнопки "другое").
     // std::nullopt, если подходящих блюд нет (или нет интернета).
     std::optional<Dish> suggest(const User& user,
-        std::unordered_set<std::string>& already_shown);
+        std::unordered_set<std::string>& already_shown, std::string category);
 
 }

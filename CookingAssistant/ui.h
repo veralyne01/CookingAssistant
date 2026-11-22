@@ -1,24 +1,20 @@
 #pragma once
 #include "user.h"
-class ProfileUI{
-public:
-	static void fill_gender(User& user);
-	static void fill_name(User& user);
-	static void fill_target(User& user);
-	static void fill_weight(User& user);
-	static void fill_height(User& user);
-	static void fill_activity_level(User& user);
-	static void ask_calorie_norm(User& user);
-	static void fill_calorie_norm(User& user, int cal);
-	static void menu(User& user);
-	static void profile_menu(User& user);
-	static void fill_age(User& user);
-	static void input_profile(User& user);
-	static void edit_profile(User& user);
-	static void profile_options(User& user);
-	static void choose_allergies(User& user);
-};
-
-class DishSuggestionUI {
-
+namespace UI{
+	void fill_gender(User& user);
+	void fill_name(User& user);
+	void fill_target(User& user);
+	void fill_weight(User& user);
+	void fill_height(User& user);
+	void fill_activity_level(User& user);
+	void ask_calorie_norm(User& user);
+	void fill_calorie_norm(User& user, int cal);
+	void menu(User& user);
+	void profile_menu(User& user);
+	void fill_age(User& user);
+	void input_profile(User& user);
+	void edit_profile(User& user);
+	void profile_options(User& user);
+	void choose_allergies(User& user);
+	std::string choose_meal_category();
 };

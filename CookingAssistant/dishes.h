@@ -31,16 +31,16 @@ struct Ingredient {
 struct Dish {
     std::string id;
     std::string name;
-    std::string category;
+    Meal category;
     std::string area;
     std::string instructions;
+    std::string cuisine;
 
     std::vector<Ingredient> ingredients;
 
     int servings = 1;
 
     Nutrition total_nutrition;
-    Nutrition nutrition_per_serving;
 
     bool nutrition_complete = false;
 };

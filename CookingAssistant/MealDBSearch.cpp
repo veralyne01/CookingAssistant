@@ -1,4 +1,4 @@
-#define NOMINMAX   // иначе windows.h определяет макросы min/max и ломает std::min/std::max
+#define NOMINMAX  
 #include <windows.h>
 #include <winhttp.h>
 #pragma comment(lib, "winhttp.lib")
@@ -9,7 +9,7 @@
 #include <cstdio>
 #include "user.h"
 #include <unordered_set>
-#include "breakfastpicker.h"
+#include "picker.h"
 #include "FoodDataCentral.h"
 
 using json = nlohmann::json;
@@ -166,13 +166,13 @@ namespace MealDB {
     }
 
 
-    void show_result(User& user) {
+    void show_result(User& user, std::string category) {
         static std::unordered_set<std::string> shown;
 
-        auto dish = Breakfast::suggest(user, shown);
+        auto dish = Picker::suggest(user, shown, category);
 
         if (!dish) {
-            std::cout << "\nNo suitable breakfast found.\n";
+            std::cout << "\nNo suitable meal found.\n";
             return;
         }
 
@@ -181,12 +181,11 @@ namespace MealDB {
         std::cout << "========================================\n";
 
         if (!dish->category.empty())
-            std::cout << "Category: " << dish->category << "\n";
+            std::cout << "CATEGORY: " << dish->category << "\n";
 
         if (!dish->area.empty())
-            std::cout << "Cuisine: " << dish->area << "\n";
+            std::cout << "CUISINE: " << dish->area << "\n";
 
-        // INGREDIENTS
         std::cout << "\nINGREDIENTS:\n";
 
         for (size_t i = 0; i < dish->ingredients.size(); ++i) {
@@ -214,26 +213,11 @@ namespace MealDB {
         std::cout << "Carbohydrates: "
             << dish->total_nutrition.carbohydrates << " g\n";
 
-        std::cout << "\nPer serving (" << dish->servings << "):\n";
-
-        std::cout << "Calories: "
-            << dish->nutrition_per_serving.calories << " kcal\n";
-
-        std::cout << "Proteins: "
-            << dish->nutrition_per_serving.proteins << " g\n";
-
-        std::cout << "Fats: "
-            << dish->nutrition_per_serving.fats << " g\n";
-
-        std::cout << "Carbohydrates: "
-            << dish->nutrition_per_serving.carbohydrates << " g\n";
-
         if (!dish->nutrition_complete) {
             std::cout << "\nWarning: nutrition data is incomplete. "
                 << "Some ingredients could not be calculated.\n";
         }
 
-        // INSTRUCTIONS
         std::cout << "\nINSTRUCTIONS:\n";
 
         if (!dish->instructions.empty()) {

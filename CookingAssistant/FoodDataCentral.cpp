@@ -269,7 +269,6 @@ namespace {
         ) != ignored_ingredients.end();
     }
 
-    // Обычный продукт, а не брендовый товар. Если поле dataType не пришло, не фильтруем.
     bool is_generic_food(const json& food) {
         auto it = food.find("dataType");
 
@@ -419,8 +418,6 @@ namespace FoodDataCentral {
             return std::nullopt;
         }
 
-        std::cout << "[USDA] Response received for: "
-            << ingredient_name << '\n';
 
         try {
             const json root = json::parse(response.body);
@@ -434,11 +431,6 @@ namespace FoodDataCentral {
 
                 return std::nullopt;
             }
-
-            std::cout << "[USDA] Found "
-                << root["foods"].size()
-                << " products for "
-                << ingredient_name << '\n';
 
             for (const auto& food : root["foods"]) {
                 if (!is_generic_food(food))
@@ -465,114 +457,9 @@ namespace FoodDataCentral {
     }
 
     void calculate_dish(Dish& dish) {
-        std::cout << "\n========== NUTRITION DEBUG ==========\n";
-
-        for (auto& ingredient : dish.ingredients) {
-
-            std::cout << "\nIngredient: "
-                << ingredient.name << '\n';
-
-            std::cout << "Measure: "
-                << ingredient.measure << '\n';
-
-            // Сбрасываем результаты предыдущего расчёта.
-            ingredient.nutrition_calculated = false;
-            ingredient.weight_grams = std::nullopt;
-            ingredient.weight_is_estimated = false;
-            ingredient.nutrition_for_amount = Nutrition{};
-
-            // 1. Проверяем, нужно ли учитывать ингредиент.
-            if (should_ignore_nutrition(
-                ingredient.name,
-                ingredient.measure
-            )) {
-                std::cout
-                    << "[SKIPPED] Nutrition ignored for: "
-                    << ingredient.name << '\n';
-
-                // Нулевой вклад в общую пищевую ценность.
-                // Помечаем как обработанный, чтобы он не вызывал
-                // предупреждение о неполноте расчёта.
-                ingredient.nutrition_per_100g = Nutrition{};
-                ingredient.nutrition_for_amount = Nutrition{};
-                ingredient.nutrition_calculated = true;
-
-                continue;
-            }
-
-            // 2. Получаем пищевую ценность из USDA.
-            auto nutrition = get_nutrition(ingredient.name);
-
-            if (!nutrition.has_value()) {
-                std::cout
-                    << "[ERROR] Nutrition data not found!\n";
-
-                continue;
-            }
-
-            std::cout << "[OK] Nutrition data received:\n";
-
-            std::cout << "Calories per 100g: "
-                << nutrition->calories << '\n';
-
-            std::cout << "Proteins per 100g: "
-                << nutrition->proteins << '\n';
-
-            std::cout << "Fats per 100g: "
-                << nutrition->fats << '\n';
-
-            std::cout << "Carbohydrates per 100g: "
-                << nutrition->carbohydrates << '\n';
-
-            // 3. Определяем массу ингредиента.
-            auto weight = MeasureConverter::get_weight(
-                ingredient.name,
-                ingredient.measure
-            );
-
-            if (!weight.has_value()) {
-                std::cout
-                    << "[ERROR] Cannot determine ingredient weight!\n";
-
-                continue;
-            }
-
-            ingredient.weight_grams = weight->grams;
-            ingredient.weight_is_estimated = weight->estimated;
-
-            if (weight->estimated) {
-                std::cout << "[ESTIMATED] Weight: "
-                    << weight->grams << " g\n";
-            }
-            else {
-                std::cout << "[OK] Weight: "
-                    << weight->grams << " g\n";
-            }
-
-            // 4. Сохраняем пищевую ценность на 100 г.
-            ingredient.nutrition_per_100g = *nutrition;
-
-            // 5. Рассчитываем пищевую ценность конкретного количества.
-            ingredient.nutrition_for_amount =
-                NutritionCalculator::calculate_ingredient(
-                    *ingredient.weight_grams,
-                    ingredient.nutrition_per_100g
-                );
-
-            ingredient.nutrition_calculated = true;
-
-            std::cout
-                << "[OK] Ingredient nutrition calculated!\n";
-
-            std::cout << "[OK] Weight: "
-                << *ingredient.weight_grams << " g\n";
-        }
-
-        // 6. Подсчитываем общую пищевую ценность блюда.
+     
         NutritionCalculator::calculate_dish(dish);
-
-        // 7. Выводим результат.
-        std::cout << "\n========== FINAL RESULT ==========\n";
+        std::cout << "\n-----------------------\n";
 
         std::cout << "Calories: "
             << dish.total_nutrition.calories << '\n';

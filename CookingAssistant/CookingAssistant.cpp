@@ -4,6 +4,6 @@
 int main(){
 	SetConsoleOutputCP(CP_UTF8);
 	User* user = new User();
-	ProfileUI::menu(*user);
+	UI::menu(*user);
 	return 0;
 }

@@ -1,0 +1,283 @@
+{
+  "meta": {
+    "source": "Google Forms, food habits survey",
+    "total_respondents": 47,
+    "note": "percent = share of respondents who answered that question. Inappropriate (profane) options are excluded. Values marked derived were calculated from the chart share (count not labeled)."
+  },
+  "questions": {
+    "q1_food_allergy": {
+      "question": "Do you have a food allergy?",
+      "type": "multi_choice_with_other",
+      "answers_total": 47,
+      "no_allergy": { "count": 40, "percent": 85.1 },
+      "allergens": {
+        "nuts": 2,
+        "peanuts": 2,
+        "milk and lactose": 2,
+        "eggs": 1,
+        "gluten": 2,
+        "seafood": 2,
+        "soy": 1,
+        "sesame": 1,
+        "mustard": 1,
+        "celery": 1,
+        "beetroot": 1,
+        "spinach": 1,
+        "sunflower oil": 1,
+        "sunflower seeds": 1,
+        "halva": 1,
+        "linden honey": 2,
+        "cumin": 2,
+        "red pepper": 1,
+        "apples": 1,
+        "sweet cherry": 1,
+        "peach": 1,
+        "plum": 1,
+        "carrot": 1,
+        "potato": 1,
+        "apricot": 1,
+        "melon": 1,
+        "banana": 1,
+        "chicken meat": 1,
+        "mayonnaise": 1,
+        "champagne": 1,
+        "white wine": 1,
+        "garlic": 1,
+        "cakes": 1
+      },
+      "allergens_percent_note": "count=1 → 2.1%, count=2 → 4.3%"
+    },
+    "q2_diet_type": {
+      "question": "What is your diet type?",
+      "answers_total": 47,
+      "options": {
+        "eat everything": { "count": 43, "percent": 91.5 },
+        "vegetarian (no meat or fish)": { "count": 0, "percent": 0.0 },
+        "vegan": { "count": 1, "percent": 2.1, "derived": true },
+        "no pork (religious or personal reasons)": { "count": 1, "percent": 2.1, "derived": true },
+        "no beef": { "count": 0, "percent": 0.0 },
+        "dietary": { "count": 2, "percent": 4.3, "derived": true }
+      }
+    },
+    "q3_never_eat": {
+      "question": "Are there any foods you definitely don't eat?",
+      "type": "free_text",
+      "answers_total": 32,
+      "note": "Free-text answers; mentions counted manually from the visible screenshots; one profane answer excluded.",
+      "no_restrictions_answers": 5,
+      "mentions": {
+        "tomatoes / tomato juice": 6,
+        "fish": 5,
+        "mushrooms": 5,
+        "onion": 3,
+        "raisins": 3,
+        "pork": 3,
+        "peppers (incl. sweet pepper)": 3,
+        "cilantro": 2,
+        "celery": 2,
+        "broccoli": 2,
+        "parsley": 2,
+        "olives": 2,
+        "eggplant": 2,
+        "nuts / peanuts": 2,
+        "milk": 1,
+        "cottage cheese": 1,
+        "cheese": 1,
+        "kefir": 1,
+        "beetroot": 1,
+        "spinach": 1,
+        "garlic": 1,
+        "dill": 1,
+        "pear": 1,
+        "bananas": 1,
+        "pumpkin": 1,
+        "zucchini": 1,
+        "pearl barley": 1,
+        "buckwheat": 1,
+        "beans": 1,
+        "figs": 1,
+        "dried fruits / prunes": 2,
+        "kozinaki (nut brittle)": 1,
+        "spicy food": 1,
+        "sour food": 1,
+        "fast food / ultra-processed food": 1,
+        "sauces": 1,
+        "mayonnaise": 1,
+        "canned meat": 1,
+        "stuffed cabbage rolls": 1,
+        "sprats": 1,
+        "crab sticks": 1,
+        "offal (brains, chicken hearts)": 2,
+        "fatty and tough meat": 1,
+        "berries (currant, blueberry, raspberry, blackberry, cranberry, strawberry, bilberry, rosehip, cherry)": 1,
+        "apples": 1,
+        "cherry plum": 1,
+        "persimmon": 1,
+        "radish / daikon": 1,
+        "asparagus": 1,
+        "vegetable fats (especially hydrogenated)": 1,
+        "seeds": 1,
+        "grass / greens": 1
+      }
+    },
+    "q4_favorite_foods": {
+      "question": "Which foods do you like the most?",
+      "answers_total": 47,
+      "options": {
+        "meat": { "count": 27, "percent": 57.4 },
+        "poultry": { "count": 26, "percent": 55.3 },
+        "fish and seafood": { "count": 4, "percent": 8.5 },
+        "dairy products": { "count": 20, "percent": 42.6 },
+        "eggs": { "count": 5, "percent": 10.6 },
+        "vegetables": { "count": 14, "percent": 29.8 },
+        "legumes": { "count": 1, "percent": 2.1 },
+        "pasta and grains": { "count": 16, "percent": 34.0 },
+        "sweets": { "count": 20, "percent": 42.6 }
+      }
+    },
+    "q5_cuisine": {
+      "question": "Which cuisine do you prefer?",
+      "answers_total": 47,
+      "options": {
+        "Italian": { "count": 15, "percent": 31.9 },
+        "Asian": { "count": 9, "percent": 19.1 },
+        "Mexican": { "count": 1, "percent": 2.1 },
+        "American": { "count": 8, "percent": 17.0 },
+        "Greek": { "count": 3, "percent": 6.4 },
+        "Spanish": { "count": 0, "percent": 0.0 },
+        "Portuguese": { "count": 0, "percent": 0.0 },
+        "Turkish": { "count": 3, "percent": 6.4 },
+        "Indonesian": { "count": 0, "percent": 0.0 },
+        "French": { "count": 3, "percent": 6.4 },
+        "Japanese": { "count": 5, "percent": 10.6 },
+        "Chinese": { "count": 1, "percent": 2.1 },
+        "Indian": { "count": 1, "percent": 2.1 },
+        "Brazilian": { "count": 0, "percent": 0.0 },
+        "Russian": { "count": 13, "percent": 27.7 },
+        "Belarusian": { "count": 22, "percent": 46.8 },
+        "Ukrainian": { "count": 2, "percent": 4.3 },
+        "Polish": { "count": 1, "percent": 2.1 },
+        "no preference": { "count": 17, "percent": 36.2 }
+      }
+    },
+    "q6_meals_per_day": {
+      "question": "How many times a day do you eat?",
+      "answers_total": 47,
+      "options": {
+        "1": { "count": 2, "percent": 4.3, "derived": true },
+        "2": { "count": 16, "percent": 34.0 },
+        "3": { "count": 14, "percent": 29.8 },
+        "4": { "count": 11, "percent": 23.4 },
+        "5 or more": { "count": 4, "percent": 8.5 }
+      }
+    },
+    "q7_meal_types": {
+      "question": "When do you eat?",
+      "answers_total": 47,
+      "options": {
+        "breakfast": { "count": 32, "percent": 68.1 },
+        "lunch": { "count": 37, "percent": 78.7 },
+        "dinner": { "count": 45, "percent": 95.7 },
+        "snack": { "count": 29, "percent": 61.7 }
+      }
+    },
+    "q8_diet": {
+      "question": "Do you follow any diet?",
+      "answers_total": 47,
+      "note": "Not all options are visible in the screenshot (sum is 46 of 47).",
+      "options": {
+        "no": { "count": 35, "percent": 74.5 },
+        "for medical reasons": { "count": 3, "percent": 6.4 },
+        "muscle gain": { "count": 4, "percent": 8.5 },
+        "cutting": { "count": 4, "percent": 8.5 }
+      }
+    },
+    "q9_breakfast": {
+      "question": "What do you usually eat for breakfast?",
+      "answers_total": 43,
+      "options": {
+        "porridges and cereals": { "count": 18, "percent": 41.9 },
+        "eggs": { "count": 12, "percent": 27.9 },
+        "pastries and sweets": { "count": 6, "percent": 14.0 },
+        "cottage cheese and dairy": { "count": 18, "percent": 41.9 },
+        "light snack": { "count": 17, "percent": 39.5 },
+        "nothing": { "count": 9, "percent": 20.9 }
+      },
+      "other_answers": [
+        { "text": "something with poultry and vegetables", "count": 1 },
+        { "text": "energy drink and cigarettes", "count": 1 },
+        { "text": "hearty breakfast (meat with a side dish…)", "count": 1, "truncated": true }
+      ]
+    },
+    "q10_lunch": {
+      "question": "What do you usually eat for lunch?",
+      "answers_total": 45,
+      "options": {
+        "light food": { "count": 6, "percent": 13.3 },
+        "soups": { "count": 14, "percent": 31.1 },
+        "fatty food": { "count": 10, "percent": 22.2 },
+        "meat dishes": { "count": 33, "percent": 73.3 },
+        "fish dishes": { "count": 3, "percent": 6.7 },
+        "salads": { "count": 16, "percent": 35.6 },
+        "nothing": { "count": 3, "percent": 6.7 }
+      },
+      "other_answers": [
+        { "text": "grains", "count": 2 },
+        { "text": "potatoes, grains", "count": 1 },
+        { "text": "mostly a side dish with meat", "count": 1 },
+        { "text": "grains with meat and vegetable salad…", "count": 1, "truncated": true },
+        { "text": "I usually end up just having a snack…", "count": 1, "truncated": true }
+      ]
+    },
+    "q11_dinner": {
+      "question": "What do you usually eat for dinner?",
+      "answers_total": 45,
+      "options": {
+        "light food": { "count": 12, "percent": 26.7 },
+        "meat dishes": { "count": 34, "percent": 75.6 },
+        "fish dishes": { "count": 6, "percent": 13.3 },
+        "salads": { "count": 12, "percent": 26.7 },
+        "cottage cheese and dairy": { "count": 15, "percent": 33.3 },
+        "nothing": { "count": 0, "percent": 0.0 }
+      },
+      "other_answers": [
+        { "text": "lactose-free cottage cheese, fruits…", "count": 1, "truncated": true },
+        { "text": "soups / dumplings / fried eggs…", "count": 1, "truncated": true },
+        { "text": "potatoes", "count": 1 },
+        { "text": "potatoes, pasta, lasagna…", "count": 1, "truncated": true },
+        { "text": "pasta dishes (pasta…)", "count": 1, "truncated": true },
+        { "text": "grains", "count": 1 },
+        { "text": "something hot", "count": 1 }
+      ]
+    },
+    "q12_snack": {
+      "question": "What do you eat as a snack?",
+      "answers_total": 44,
+      "options": {
+        "fruits": { "count": 31, "percent": 70.5 },
+        "vegetables": { "count": 4, "percent": 9.1 },
+        "salads": { "count": 2, "percent": 4.5 },
+        "cottage cheese and dairy": { "count": 23, "percent": 52.3 },
+        "pastries and sweets": { "count": 35, "percent": 79.5 }
+      }
+    },
+    "q13_experiments": {
+      "question": "How open are you to experiments?",
+      "answers_total": 47,
+      "options": {
+        "I like the familiar": { "count": 6, "percent": 12.8 },
+        "I sometimes try new things": { "count": 37, "percent": 78.7 },
+        "I want everything new": { "count": 4, "percent": 8.5 }
+      }
+    },
+    "q14_cooking_time": {
+      "question": "How much time are you willing to spend on cooking?",
+      "answers_total": 47,
+      "options": {
+        "up to 20 minutes": { "count": 9, "percent": 19.1 },
+        "up to an hour": { "count": 30, "percent": 63.8 },
+        "doesn't matter": { "count": 8, "percent": 17.0 }
+      }
+    }
+  }
+}
