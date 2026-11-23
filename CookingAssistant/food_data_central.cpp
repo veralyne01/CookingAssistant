@@ -7,15 +7,15 @@
 #include <algorithm>
 #include <cctype>
 #include <vector>
-#include "FoodDataCentral.h"
+#include "food_data_central.h"
 #include <nlohmann/json.hpp>
 
 #include <cstdlib>
 #include <cstdio>
 #include <string>
 #include <optional>
-#include "NutritionCalculator.h"
-#include "MeasureConverter.h"
+#include "nutrition_calculator.h"
+#include "measure_converter.h"
 
 using json = nlohmann::json;
 
@@ -312,13 +312,28 @@ namespace {
                 }
             );
 
-            if (!nutrient.contains("value") ||
-                !nutrient["value"].is_number()) {
+            if (!nutrient.contains("value")) continue;
+            double value = 0.0;
+            const auto& raw_value = nutrient["value"];
+            if (raw_value.is_number()) {
+                value = raw_value.get<double>();
+            } else if (raw_value.is_string()) {
+                std::string raw = raw_value.get<std::string>();
+                const auto first = raw.find_first_not_of(" \t\r\n");
+                if (first == std::string::npos) continue;
+                const auto last = raw.find_last_not_of(" \t\r\n");
+                raw = raw.substr(first, last - first + 1);
+                std::replace(raw.begin(), raw.end(), ',', '.');
+                try {
+                    std::size_t parsed = 0;
+                    value = std::stod(raw, &parsed);
+                    if (parsed != raw.size()) continue;
+                } catch (const std::exception&) {
+                    continue;
+                }
+            } else {
                 continue;
             }
-
-            const double value =
-                nutrient["value"].get<double>();
 
             if (name == "Energy" &&
                 (unit == "kcal" || unit == "kj")) {

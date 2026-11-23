@@ -1,22 +1,21 @@
+//Поиск по MealDB.com; конечный результат - массив из 20 блюд
 #define NOMINMAX  
 #include <windows.h>
 #include <winhttp.h>
 #pragma comment(lib, "winhttp.lib")
 
-#include "mealdbsearch.h"
+#include "meal_db_search.h"
 #include <nlohmann/json.hpp>
 #include <cctype>
 #include <cstdio>
 #include "user.h"
 #include <unordered_set>
 #include "picker.h"
-#include "FoodDataCentral.h"
+#include "food_data_central.h"
 
 using json = nlohmann::json;
 
 namespace {
-
-    // Закрывает дескриптор WinHTTP сам, даже при раннем return
     struct HttpHandle {
         HINTERNET h;
         explicit HttpHandle(HINTERNET handle) : h(handle) {}
@@ -24,8 +23,6 @@ namespace {
         HttpHandle(const HttpHandle&) = delete;
         HttpHandle& operator=(const HttpHandle&) = delete;
     };
-
-    // Кодирует строку для URL (проценты по байтам UTF-8)
     std::string url_encode(const std::string& s) {
         std::string out;
         char buf[4];
@@ -41,14 +38,13 @@ namespace {
         return out;
     }
 
-    // GET-запрос. Возвращает тело ответа или пустую строку при любой ошибке.
     std::string http_get(const std::string& path) {
-        const std::wstring wpath(path.begin(), path.end()); // path уже закодирован: только ASCII
+        const std::wstring wpath(path.begin(), path.end());
 
         HttpHandle session(WinHttpOpen(L"CookingAssistant/1.0",
             WINHTTP_ACCESS_TYPE_DEFAULT_PROXY, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, 0));
         if (!session.h) return {};
-        WinHttpSetTimeouts(session.h, 5000, 5000, 10000, 10000); // не висим вечно без интернета
+        WinHttpSetTimeouts(session.h, 5000, 5000, 10000, 10000);
 
         HttpHandle connection(WinHttpConnect(session.h, L"www.themealdb.com",
             INTERNET_DEFAULT_HTTPS_PORT, 0));
@@ -83,7 +79,6 @@ namespace {
         return body;
     }
 
-    // Значение строкового поля или "" (поле может отсутствовать или быть null)
     std::string text(const json& j, const std::string& key) {
         auto it = j.find(key);
         if (it != j.end() && it->is_string()) return it->get<std::string>();
@@ -98,13 +93,19 @@ namespace {
         return s.substr(b, e - b + 1);
     }
 
-    // Одна запись "meals" -> Dish
     Dish dish_from_json(const json& m) {
         Dish d;
         d.id = text(m, "idMeal");
         d.name = text(m, "strMeal");
-        d.category = text(m, "strCategory");
+        const std::string raw_category = text(m, "strCategory");
+        d.category = raw_category;
+        if (raw_category == "Breakfast") d.category = "breakfast";
+        else if (raw_category == "Lunch") d.category = "lunch";
+        else if (raw_category == "Dinner") d.category = "dinner";
+        else if (raw_category == "Dessert" || raw_category == "Side" || raw_category == "Starter") d.category = "snack";
         d.area = text(m, "strArea");
+        d.cuisine = d.area;
+        d.cuisine = d.area;
         if (d.area.empty()) d.area = text(m, "strCountry");
         d.instructions = text(m, "strInstructions");
 
@@ -125,7 +126,6 @@ namespace {
         return d;
     }
 
-    // Достаёт массив "meals". Если блюд нет (meals: null), тело пустое или JSON битый, вернёт [].
     json meals_array(const std::string& body) {
         if (body.empty()) return json::array();
         try {
@@ -138,7 +138,7 @@ namespace {
         return json::array();
     }
 
-} // namespace
+}
 
 namespace MealDB {
 
@@ -164,71 +164,4 @@ namespace MealDB {
         if (meals.empty()) return std::nullopt;
         return dish_from_json(meals.front());
     }
-
-
-    void show_result(User& user, std::string category) {
-        static std::unordered_set<std::string> shown;
-
-        auto dish = Picker::suggest(user, shown, category);
-
-        if (!dish) {
-            std::cout << "\nNo suitable meal found.\n";
-            return;
-        }
-
-        std::cout << "\n========================================\n";
-        std::cout << "             " << dish->name << "\n";
-        std::cout << "========================================\n";
-
-        if (!dish->category.empty())
-            std::cout << "CATEGORY: " << dish->category << "\n";
-
-        if (!dish->area.empty())
-            std::cout << "CUISINE: " << dish->area << "\n";
-
-        std::cout << "\nINGREDIENTS:\n";
-
-        for (size_t i = 0; i < dish->ingredients.size(); ++i) {
-            std::cout << " - " << dish->ingredients[i].name;
-
-            if (i < dish->ingredients.size() &&
-                !dish->ingredients[i].measure.empty()) {
-                std::cout << " — " << dish->ingredients[i].measure;
-            }
-
-            std::cout << "\n";
-        }
-        FoodDataCentral::calculate_dish(*dish);
-        std::cout << "\nNUTRITION:\n";
-
-        std::cout << "Calories: "
-            << dish->total_nutrition.calories << " kcal\n";
-
-        std::cout << "Proteins: "
-            << dish->total_nutrition.proteins << " g\n";
-
-        std::cout << "Fats: "
-            << dish->total_nutrition.fats << " g\n";
-
-        std::cout << "Carbohydrates: "
-            << dish->total_nutrition.carbohydrates << " g\n";
-
-        if (!dish->nutrition_complete) {
-            std::cout << "\nWarning: nutrition data is incomplete. "
-                << "Some ingredients could not be calculated.\n";
-        }
-
-        std::cout << "\nINSTRUCTIONS:\n";
-
-        if (!dish->instructions.empty()) {
-            std::cout << dish->instructions << "\n";
-        }
-        else {
-            std::cout << "Instructions are not available.\n";
-        }
-
-        std::cout << "\n========================================\n";
-    }
-
-    
 }

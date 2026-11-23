@@ -1,7 +1,12 @@
-﻿.vs/
+.vs/
 x64/
-x86/
 Debug/
 Release/
-*.user
-*.suo
+*.vcxproj.user
+*.obj
+*.exe
+*.pdb
+*.ilk
+*.pch
+*.db
+*.ipch

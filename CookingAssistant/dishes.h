@@ -6,7 +6,7 @@
 #include <string>
 #include <optional>
 
-#include "enums.h"
+
 
 struct Nutrition {
     double calories = 0.0;
@@ -31,7 +31,7 @@ struct Ingredient {
 struct Dish {
     std::string id;
     std::string name;
-    Meal category;
+    std::string category;
     std::string area;
     std::string instructions;
     std::string cuisine;

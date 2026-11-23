@@ -1,0 +1,13 @@
+{
+  "name": "",
+  "age": 0,
+  "gender": "not_chosen",
+  "weight": 0.0,
+  "height": 0.0,
+  "target": "not_chosen",
+  "activity_level": "not_chosen",
+  "calorie_norm": 0,
+  "allergens": [],
+  "liked_products": [],
+  "disliked_products": []
+}

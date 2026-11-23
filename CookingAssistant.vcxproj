@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{04e8221a-180e-41d9-ba5e-6acb56f53540}</ProjectGuid>
+    <ProjectGuid>{bb80fdfa-cda2-4bbb-8fbd-9a81445d63fd}</ProjectGuid>
     <RootNamespace>CookingAssistant</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -111,13 +111,10 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>C:\vcpkg\vcpkg\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>odbc32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
@@ -132,7 +129,6 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\vcpkg\vcpkg\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,43 +139,47 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Auxiliary.cpp" />
-    <ClCompile Include="Menu.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Picker.cpp" />
-    <ClCompile Include="CookingAssistant.cpp" />
-    <ClCompile Include="DishSuggestionUI.cpp" />
-    <ClCompile Include="FoodDataCentral.cpp" />
-    <ClCompile Include="MeasureConverter.cpp" />
-    <ClCompile Include="NutritionCalculator.cpp" />
-    <ClCompile Include="Parsers.cpp" />
-    <ClCompile Include="ProileManager.cpp" />
-    <ClCompile Include="MealDBSearch.cpp" />
-    <ClCompile Include="Reasoner.cpp" />
-    <ClCompile Include="SQLManager.cpp" />
-    <ClCompile Include="ProfileUI.cpp" />
-    <ClCompile Include="User.cpp" />
+    <ClCompile Include="CookingAssistant\auxiliary.cpp" />
+    <ClCompile Include="CookingAssistant\cooking_assistant.cpp" />
+    <ClCompile Include="CookingAssistant\dish_suggestion_ui.cpp" />
+    <ClCompile Include="CookingAssistant\food_data_central.cpp" />
+    <ClCompile Include="CookingAssistant\meal_db_search.cpp" />
+    <ClCompile Include="CookingAssistant\measure_converter.cpp" />
+    <ClCompile Include="CookingAssistant\menu.cpp" />
+    <ClCompile Include="CookingAssistant\nutrition_calculator.cpp" />
+    <ClCompile Include="CookingAssistant\picker.cpp" />
+    <ClCompile Include="CookingAssistant\profile_manager.cpp" />
+    <ClCompile Include="CookingAssistant\profile_ui.cpp" />
+    <ClCompile Include="CookingAssistant\reasoner.cpp" />
+    <ClCompile Include="CookingAssistant\user.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Auxiliary.h" />
-    <ClInclude Include="picker.h" />
-    <ClInclude Include="dishes.h" />
-    <ClInclude Include="enums.h" />
-    <ClInclude Include="FoodDataCentral.h" />
-    <ClInclude Include="groups.h" />
-    <ClInclude Include="mealdbsearch.h" />
-    <ClInclude Include="MeasureConverter.h" />
-    <ClInclude Include="NutritionCalculator.h" />
-    <ClInclude Include="parsers.h" />
-    <ClInclude Include="ProfileManager.h" />
-    <ClInclude Include="Reasoner.h" />
-    <ClInclude Include="ui.h" />
-    <ClInclude Include="user.h" />
+    <ClInclude Include="CookingAssistant\auxiliary.h" />
+    <ClInclude Include="CookingAssistant\dishes.h" />
+    <ClInclude Include="CookingAssistant\enums.h" />
+    <ClInclude Include="CookingAssistant\food_data_central.h" />
+    <ClInclude Include="CookingAssistant\groups.h" />
+    <ClInclude Include="CookingAssistant\meal_db_search.h" />
+    <ClInclude Include="CookingAssistant\measure_converter.h" />
+    <ClInclude Include="CookingAssistant\nutrition_calculator.h" />
+    <ClInclude Include="CookingAssistant\picker.h" />
+    <ClInclude Include="CookingAssistant\profile_manager.h" />
+    <ClInclude Include="CookingAssistant\reasoner.h" />
+    <ClInclude Include="CookingAssistant\sqltypes.h" />
+    <ClInclude Include="CookingAssistant\ui.h" />
+    <ClInclude Include="CookingAssistant\user.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="CookingAssistant.rc" />
+    <ResourceCompile Include="CookingAssistant\CookingAssistant.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CookingAssistant\CookingAssistant.vcxproj" />
+    <None Include="CookingAssistant\CookingAssistant.vcxproj.filters" />
+    <None Include="CookingAssistant\meal_rules.json" />
+    <None Include="CookingAssistant\profile.json" />
+    <None Include="CookingAssistant\README.md" />
+    <None Include="CookingAssistant\recipes.json" />
+    <None Include="CookingAssistant\survey_results.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,78 +1,16 @@
 # Cooking Assistant
 
+Console C++20 application for recipe suggestions and nutritional calculations.
 
+## Refactored structure
+- Domain choices are string keys backed by dictionaries in `enums.h` (`Values`).
+- User profile is stored in `profile.json`.
+- Meal selection accepts numeric input through a reusable range validator.
+- TheMealDB searches use the Breakfast category and keyword searches for lunch, dinner and snacks; candidate lists are capped at 20 and de-duplicated.
+- USDA nutrition parsing accepts numeric JSON values and numeric strings; invalid/non-numeric nutrient values are skipped.
 
-## Описание проекта
+## API limitation
+TheMealDB does not provide native Lunch, Dinner or Snack categories in the same way it provides Breakfast. Those options are therefore approximated by recipe-name keyword searches. The application may return fewer than 20 dishes if the API does not yield enough unique recipes or the allergen filter removes them.
 
-
-
-**Cooking Assistant** — консольное приложение на C++, предназначенное для персонализированного подбора рецептов с учётом пищевых предпочтений и ограничений пользователя.
-
-
-
-Проект разрабатывается в рамках учебной расчётной работы.
-
-
-
-## Основные возможности
-
-
-
-* Хранение информации об ингредиентах: название, калорийность, белки, жиры и углеводы.
-
-* Описание рецептов с указанием ингредиентов, типа блюда и времени приготовления.
-
-* Учёт пищевых предпочтений пользователя.
-
-* Учёт аллергенов и продуктов, которые пользователь не употребляет.
-
-* Подбор рецептов с учётом индивидуальных ограничений.
-
-
-
-*Функциональность находится в разработке. Возможности будут добавляться по мере реализации проекта.\*
-
-
-
-## Технологии
-
-
-
-* **Язык:** C++
-
-* **Среда разработки:** Microsoft Visual Studio
-
-* **Планируемая система хранения данных:** Microsoft SQL Server LocalDB
-
-* **Интерфейс:** консольный
-
-
-
-## Структура проекта
-
-
-
-* `Ingredient` — класс для описания ингредиентов.
-
-* `Recipe` — класс для хранения информации о рецептах.
-
-* `User` — класс для хранения предпочтений и ограничений пользователя.
-
-
-
-## Планы развития
-
-
-
-* Реализовать создание и обработку рецептов.
-
-* Добавить расчёт калорийности и пищевой ценности блюд.
-
-* Реализовать фильтрацию рецептов по аллергенам и предпочтениям.
-
-* Добавить персонализированный подбор меню.
-
-* Подключить базу данных для хранения пользователей, ингредиентов и рецептов.
-
-
-
+## Build
+Open `CookingAssistant.vcxproj` in Visual Studio. The project uses WinHTTP and nlohmann/json. API key for USDA is read from the `FDC_API_KEY` environment variable.

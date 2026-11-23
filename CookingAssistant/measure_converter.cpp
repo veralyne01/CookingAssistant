@@ -1,5 +1,5 @@
 
-#include "MeasureConverter.h"
+#include "measure_converter.h"
 
 #include <regex>
 #include <algorithm>
@@ -11,8 +11,6 @@
 namespace MeasureConverter {
 
     namespace {
-
-        // Приводим строку к нижнему регистру.
         std::string normalize(std::string value) {
             std::transform(
                 value.begin(),
@@ -25,8 +23,6 @@ namespace MeasureConverter {
 
             return value;
         }
-
-        // Убираем пробелы по краям.
         std::string trim(const std::string& value) {
             const size_t first = value.find_first_not_of(" \t\r\n");
 
@@ -45,13 +41,11 @@ namespace MeasureConverter {
             return name.find(word) != std::string::npos;
         }
 
-        // Определяем единицу измерения по её обозначению.
         MeasureUnit identify_unit(const std::string& raw_unit) {
             const std::string unit = normalize(raw_unit);
 
             static const std::unordered_map<std::string, MeasureUnit> units = {
 
-                // Масса
                 {"g", MeasureUnit::GRAM},
                 {"gram", MeasureUnit::GRAM},
                 {"grams", MeasureUnit::GRAM},
@@ -69,7 +63,6 @@ namespace MeasureConverter {
                 {"pound", MeasureUnit::POUND},
                 {"pounds", MeasureUnit::POUND},
 
-                // Объём
                 {"ml", MeasureUnit::MILLILITER},
                 {"milliliter", MeasureUnit::MILLILITER},
                 {"milliliters", MeasureUnit::MILLILITER},
@@ -98,7 +91,6 @@ namespace MeasureConverter {
                 {"fluid ounce", MeasureUnit::FLUID_OUNCE},
                 {"fluid ounces", MeasureUnit::FLUID_OUNCE},
 
-                // Количество
                 {"piece", MeasureUnit::PIECE},
                 {"pieces", MeasureUnit::PIECE},
                 {"pc", MeasureUnit::PIECE},
@@ -129,8 +121,6 @@ namespace MeasureConverter {
             return it->second;
         }
 
-        // Плотность продукта в г/мл.
-        // Значения приблизительные.
         std::optional<double> get_density(
             const std::string& raw_name
         ) {
@@ -181,14 +171,12 @@ namespace MeasureConverter {
             return std::nullopt;
         }
 
-        // Приблизительная масса одной единицы продукта.
         std::optional<double> get_unit_weight(
             const std::string& raw_name,
             MeasureUnit unit
         ) {
             const std::string name = normalize(raw_name);
 
-            // Яйца.
             if (contains(name, "egg") &&
                 (unit == MeasureUnit::PIECE ||
                     unit == MeasureUnit::SMALL ||
@@ -204,7 +192,6 @@ namespace MeasureConverter {
                 return 50.0;
             }
 
-            // Картофель.
             if (contains(name, "potato")) {
                 if (unit == MeasureUnit::SMALL)
                     return 100.0;
@@ -219,25 +206,21 @@ namespace MeasureConverter {
                     return 150.0;
             }
 
-            // Чеснок.
             if (contains(name, "garlic") &&
                 unit == MeasureUnit::CLOVE) {
                 return 3.0;
             }
 
-            // Бекон.
             if (contains(name, "bacon") &&
                 unit == MeasureUnit::STRIP) {
                 return 8.0;
             }
 
-            // Хлеб.
             if (contains(name, "bread") &&
                 unit == MeasureUnit::SLICE) {
                 return 30.0;
             }
 
-            // Петрушка.
             if (contains(name, "parsley") &&
                 unit == MeasureUnit::PIECE) {
                 return 2.0;
@@ -268,10 +251,6 @@ namespace MeasureConverter {
         }
     }
 
-    // -------------------------------------------------
-    // PARSE MEASURE
-    // -------------------------------------------------
-
     std::optional<ParsedMeasure> parse_measure(
         const std::string& raw_measure
     ) {
@@ -279,18 +258,12 @@ namespace MeasureConverter {
 
         if (measure.empty())
             return std::nullopt;
-
-        // Меры без числа.
-        // Считаем, что Pinch означает одну щепотку.
         if (measure == "pinch" || measure == "pinches") {
             return ParsedMeasure{
                 1.0,
                 MeasureUnit::PINCH
             };
         }
-
-        // Число + единица измерения.
-        // Поддерживает: 200g, 0.5 kg, 1 tbs, 2 strips.
         static const std::regex pattern(
             R"(^\s*(\d+(?:[.,]\d+)?)\s*([a-z ]*)\s*$)"
         );
@@ -322,7 +295,6 @@ namespace MeasureConverter {
         if (amount <= 0)
             return std::nullopt;
 
-        // Если единицы нет, трактуем число как количество штук.
         MeasureUnit unit = unit_string.empty()
             ? MeasureUnit::PIECE
             : identify_unit(unit_string);
@@ -336,10 +308,6 @@ namespace MeasureConverter {
         };
     }
 
-    // -------------------------------------------------
-    // CONVERT TO GRAMS
-    // -------------------------------------------------
-
     std::optional<WeightResult> convert_to_grams(
         const std::string& ingredient_name,
         const ParsedMeasure& measure
@@ -349,7 +317,6 @@ namespace MeasureConverter {
         if (amount <= 0)
             return std::nullopt;
 
-        // Масса: точное преобразование.
         switch (measure.unit) {
 
         case MeasureUnit::GRAM:
@@ -368,7 +335,6 @@ namespace MeasureConverter {
             break;
         }
 
-        // Объём: сначала переводим в миллилитры.
         double volume_ml = 0.0;
 
         switch (measure.unit) {
@@ -413,7 +379,6 @@ namespace MeasureConverter {
             };
         }
 
-        // Щепотка.
         if (measure.unit == MeasureUnit::PINCH) {
             auto weight = get_pinch_weight(ingredient_name);
 
@@ -426,7 +391,6 @@ namespace MeasureConverter {
             };
         }
 
-        // Штучные продукты.
         auto unit_weight = get_unit_weight(
             ingredient_name,
             measure.unit
@@ -440,10 +404,6 @@ namespace MeasureConverter {
             true
         };
     }
-
-    // -------------------------------------------------
-    // COMPLETE CONVERSION
-    // -------------------------------------------------
 
     std::optional<WeightResult> get_weight(
         const std::string& ingredient_name,

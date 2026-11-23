@@ -13,5 +13,5 @@ private:
     static double calorage_compliance(User& user, Dish dish);
     static double cuisine_compliance(const json& f, Dish dish);
 public:
-    static double total_compliance(const json& f, Dish dish, User& user);
+    static double total_compliance(Dish dish, User& user);
 };

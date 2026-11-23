@@ -1,5 +1,5 @@
 
-#include "NutritionCalculator.h"
+#include "nutrition_calculator.h"
 
 namespace NutritionCalculator {
 

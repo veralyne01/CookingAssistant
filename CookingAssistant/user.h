@@ -1,7 +1,8 @@
 #pragma once
 #include <iostream>
+#include <string>
 #include <vector>
-#include "enums.h"
+
 class User{
 public:
 	std::string name;
@@ -11,12 +12,12 @@ public:
 	double weight = 0;
 	double height = 0;
 	int age = 0;
-	Target target = Target::not_chosen;
-	Gender gender = Gender::not_chosen;
-	Activity_level activity_level = Activity_level::not_chosen;
+	std::string target = "not_chosen";
+	std::string gender = "not_chosen";
+	std::string activity_level = "not_chosen";
 	int calorie_norm = 0;
 
 	static double count_appr_calories(User user);
-	static double choose_coef(Activity_level level);
+	static double choose_coef(const std::string& level);
 	static double count_target_calories(User user);
 };

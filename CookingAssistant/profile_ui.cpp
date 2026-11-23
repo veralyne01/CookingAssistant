@@ -1,15 +1,13 @@
 #include "user.h"
 #include "ui.h"
 #include "groups.h"
-#include "parsers.h"
 #include "enums.h"
 #include <iostream>
 #include <fstream> 
 #include <string>
 #include <cstdlib>
-#include "ProfileManager.h"
-#include "mealdbsearch.h"
-using namespace MealDB;
+#include "profile_manager.h"
+#include "meal_db_search.h"
 
 namespace UI {
 	void fill_gender(User& user) {
@@ -17,8 +15,8 @@ namespace UI {
 		system("cls");
 		std::cout << "Choose your gender: enter M for male or F for female\n" << "> ";
 		std::cin >> g;
-		if (g == 'M' || g == 'm') user.gender = Gender::male;
-		else if (g == 'F' || g == 'f') user.gender = Gender::female;
+		if (g == 'M' || g == 'm') user.gender = "male";
+		else if (g == 'F' || g == 'f') user.gender = "female";
 		else {
 			std::cout << "Invalid input! Please, try again\n";
 			fill_gender(user);
@@ -35,9 +33,9 @@ namespace UI {
 		char t;
 		std::cout << "Choose your target:\n1. I want to lose weight\n2. I want to stay fit\n3. I want to gain weight\n" << "> ";
 		std::cin >> t;
-		if (t == '1') user.target = Target::weight_loss;
-		else if (t == '2') user.target = Target::maintenance;
-		else if (t == '3') user.target = Target::weight_gain;
+		if (t == '1') user.target = "weight_loss";
+		else if (t == '2') user.target = "maintenance";
+		else if (t == '3') user.target = "weight_gain";
 		else fill_target(user);
 	}
 
@@ -128,11 +126,11 @@ namespace UI {
 			"3. I go to moderate-intensity workouts 3-5 times a week\n4. I train intensely almost every day or do physical labor\n" <<
 			"5. I train every day and work in a physically demanding job\n" << "> ";
 		std::cin >> t;
-		if (t == '1') user.activity_level = Activity_level::no_activity;
-		else if (t == '2') user.activity_level = Activity_level::light_exertion;
-		else if (t == '3') user.activity_level = Activity_level::regular_workouts;
-		else if (t == '4') user.activity_level = Activity_level::frequent_workouts;
-		else if (t == '5') user.activity_level = Activity_level::hard_work;
+		if (t == '1') user.activity_level = "no_activity";
+		else if (t == '2') user.activity_level = "light_exertion";
+		else if (t == '3') user.activity_level = "regular_workouts";
+		else if (t == '4') user.activity_level = "frequent_workouts";
+		else if (t == '5') user.activity_level = "hard_work";
 		else fill_activity_level(user);
 	}
 
@@ -207,13 +205,13 @@ namespace UI {
 		(user.name.find_first_not_of(" \n\t\r") == std::string::npos) ? std::cout << "-\n" : std::cout << user.name << "\n";
 		std::cout << "Age:\t\t";
 		(user.age == 0) ? std::cout << "-\n" : std::cout << user.age << "\n";
-		std::cout << "Gender:\t\t" << Parser::parse_gender(user.gender) << "\n";
+		std::cout << "Gender:\t\t" << Values::genders.at(user.gender) << "\n";
 		std::cout << "Weight:\t\t";
 		(user.weight == 0) ? std::cout << "-\n" : std::cout << user.weight << "\n";
 		std::cout << "Height:\t\t";
 		(user.height == 0) ? std::cout << "-\n" : std::cout << user.height << "\n";
-		std::cout << "Target:\t\t" << Parser::parse_target(user.target) << "\n";
-		std::cout << "Activity level:\t" << Parser::parse_activity_level(user.activity_level) << "\n";
+		std::cout << "Target:\t\t" << Values::targets.at(user.target) << "\n";
+		std::cout << "Activity level:\t" << Values::activity_levels.at(user.activity_level) << "\n";
 		std::cout << "Calorie norm:\t";
 		(user.calorie_norm == 0) ? std::cout << "-\n" : std::cout << user.calorie_norm << "\n";
 	}
@@ -230,64 +228,27 @@ namespace UI {
 		ProfileManager::save_user_to_file(user);
 	}
 
-	void UI::edit_profile(User& user) {
-		std::cout << "Choose option to edit:\n1. Name\n2. Age\n3. Gender\n4. Weight\n5. Height\n6. Target\n7. Activity level\n";
-		char c;
-		std::cin >> c;
-		switch (c) {
-		case '1':
-			fill_name(user);
-			break;
-		case '2':
-			fill_age(user);
-			ask_calorie_norm(user);
-			break;
-		case '3':
-			fill_gender(user);
-			ask_calorie_norm(user);
-			break;
-		case '4':
-			fill_weight(user);
-			ask_calorie_norm(user);
-			break;
-		case '5':
-			fill_height(user);
-			ask_calorie_norm(user);
-			break;
-		case '6':
-			fill_target(user);
-			ask_calorie_norm(user);
-			break;
-		case '7':
-			fill_activity_level(user);
-			ask_calorie_norm(user);
-			break;
-		default:
-			std::cout << "Invalid input! Please, try again\n";
-			break;
-		}
-		ProfileManager::save_user_to_file(user);
-	}
+    void edit_profile(User& user) {
+        std::cout << "Choose option to edit:\n1. Name\n2. Age\n3. Gender\n4. Weight\n5. Height\n6. Target\n7. Activity level\n";
+        switch (read_menu_option(1, 7)) {
+        case 1: fill_name(user); break;
+        case 2: fill_age(user); ask_calorie_norm(user); break;
+        case 3: fill_gender(user); ask_calorie_norm(user); break;
+        case 4: fill_weight(user); ask_calorie_norm(user); break;
+        case 5: fill_height(user); ask_calorie_norm(user); break;
+        case 6: fill_target(user); ask_calorie_norm(user); break;
+        case 7: fill_activity_level(user); ask_calorie_norm(user); break;
+        }
+        ProfileManager::save_user_to_file(user);
+    }
 
-	void profile_options(User& user) {
-		std::cout << "\n1. New profile\n2. Edit profile\n3. Back\n";
-		char c;
-		std::cin >> c;
-		switch (c) {
-		case '1': {
-			input_profile(user);
-			menu(user);
-			break;
-		}
-		case '2': {
-			edit_profile(user);
-			menu(user);
-			break;
-		}
-		case '3': {
-			menu(user);
-			break;
-		}
-		}
-	}
+    void profile_options(User& user) {
+        std::cout << "\n1. New profile\n2. Edit profile\n3. Back\n";
+        switch (read_menu_option(1, 3)) {
+        case 1: input_profile(user); break;
+        case 2: edit_profile(user); break;
+        case 3: return;
+        }
+    }
+
 }

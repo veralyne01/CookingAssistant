@@ -16,6 +16,5 @@ namespace MealDB {
 
     // lookup.php?i=...  -> полные данные одного блюда
     std::optional<Dish> lookup_by_id(const std::string& id);
-    void show_result(User& user, std::string category);
 
 }

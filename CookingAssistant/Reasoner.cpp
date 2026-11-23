@@ -1,42 +1,50 @@
-#include "Reasoner.h"
+//Функции решения многокритериальной задачи
+#include "reasoner.h"
 #include "dishes.h"
 #include "picker.h"
-#include "Auxiliary.h"
-#include <math.h>
+#include "auxiliary.h"
+#include <cmath>
+#include <algorithm>
+#include <fstream>
+#include "enums.h"
 
 using namespace Auxiliary;
-double Reasoner::meal_type_compliance(const json& f, Dish dish) {
-	json options;
-	switch (dish.category) {
-		case Meal::breakfast:{
-			options = f.at("q9_breakfast").at("options");
-			break;
-		}
-		case Meal::lunch: {
-			options = f.at("q10_lunch").at("options");
-			break;
-		}
-		case Meal::dinner: {
-			options = f.at("q11_dinner").at("options");
-			break;
-		}
-		case Meal::snack: {
-			options = f.at("q12_snack").at("options");
-			break;
-		}
-	}
-	double result = 0;
+double Reasoner::meal_type_compliance(const json& j, Dish dish) {
+	json options = j.at("groups");
+	std::string meal = dish.category;
+
+	double result = 0.0;
+	double total_weight = 0.0;
+
 	for (const auto& option : options) {
-		std::string name = option.at("name").get<std::string>();
+		double weight = option.at("weights").at(meal);
+		total_weight += weight;
+
+		bool group_matches = false;
+
 		for (const auto& ingredient : dish.ingredients) {
-			if (ingredient.name == name) {
-				double percentage = option.at("percent").get<double>() / 100;
-				result += percentage;
+			auto it = std::find(
+				option["keywords"].begin(),
+				option["keywords"].end(),
+				ingredient.name
+			);
+
+			if (it != option["keywords"].end()) {
+				group_matches = true;
+				break;
 			}
 		}
+
+		if (group_matches) {
+			result += weight;
+		}
 	}
-	return result;
+
+	if (total_weight == 0.0) return 0.0;
+
+	return result / total_weight;
 }
+
 double Reasoner::user_preferences_compliance(User& user, Dish dish) {
 	int likes = 0, dislikes = 0;
 	for (const auto& product : user.liked_products) {
@@ -54,28 +62,15 @@ double Reasoner::user_preferences_compliance(User& user, Dish dish) {
 }
 
 double Reasoner::calorage_compliance(User& user, Dish dish) {
-	int target = 0;
-	switch (dish.category) {
-		case (Meal::breakfast): {
-			target = user.calorie_norm / 100 * 30;
-			break;
-		}
-		case (Meal::lunch): {
-			target = user.calorie_norm / 100 * 40;
-			break;
-		}
-		case (Meal::dinner): {
-			target = user.calorie_norm / 100 * 20;
-			break;
-		}
-		case (Meal::snack): {
-			target = user.calorie_norm / 100 * 10;
-			break;
-		}
-		default: break;
-	}
-	const double MAX_DEVIATION = target * 0.2;
-	return 1 - abs(dish.total_nutrition.calories - target) / MAX_DEVIATION;
+    double meal_fraction = 0.0;
+    if (dish.category == "breakfast") meal_fraction = 0.30;
+    else if (dish.category == "lunch") meal_fraction = 0.40;
+    else if (dish.category == "dinner") meal_fraction = 0.20;
+    else if (dish.category == "snack") meal_fraction = 0.10;
+    const double target = user.calorie_norm * meal_fraction;
+    if (target <= 0.0) return 0.0;
+    const double deviation = std::abs(dish.total_nutrition.calories - target);
+    return std::max(0.0, 1.0 - deviation / (target * 0.2));
 }
 
 double Reasoner::cuisine_compliance(const json& f, Dish dish) {
@@ -88,10 +83,12 @@ double Reasoner::cuisine_compliance(const json& f, Dish dish) {
 	return 0;
 }
 
-double Reasoner::total_compliance(const json& f, Dish dish, User& user) {
-	double P1 = meal_type_compliance(f, dish);
+double Reasoner::total_compliance(Dish dish, User& user) {
+	json survey = load_json("survey_results.json");
+	json rules = load_json("meal_rules.json");
+	double P1 = meal_type_compliance(rules, dish);
 	double P2 = user_preferences_compliance(user, dish);
 	double P3 = calorage_compliance(user, dish);
-	double P4 = cuisine_compliance(f, dish);
+	double P4 = cuisine_compliance(survey, dish);
 	return 0.15 * P1 + 0.4 * P2 + 0.35 * P3 + 0.1 * P4;
 }
