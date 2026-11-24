@@ -264,69 +264,359 @@
     "description": "Необязательные сигналы. Они надёжнее ингредиентов, поэтому в combine им дан больший вес. Если поле strCategory пустое или нет совпадений, этот сигнал просто не учитывается. У записи в name_keywords может быть необязательное поле exclude: если в названии блюда есть слово из него, запись не применяется. Если названию блюда подходит несколько записей, берётся максимум по приёму пищи.",
     "category_hints": {
       "note": "Ключи это значения поля strCategory в TheMealDB. Если категория не названа здесь, сигнал не используется.",
-      "Breakfast": { "breakfast": 1.0, "lunch": 0.1, "dinner": 0.0, "snack": 0.1 },
-      "Dessert": { "breakfast": 0.14, "lunch": 0.0, "dinner": 0.0, "snack": 0.795 },
-      "Starter": { "breakfast": 0.05, "lunch": 0.5, "dinner": 0.4, "snack": 0.3 },
-      "Side": { "breakfast": 0.1, "lunch": 0.4, "dinner": 0.4, "snack": 0.2 },
-      "Beef": { "breakfast": 0.02, "lunch": 0.733, "dinner": 0.756, "snack": 0.0 },
-      "Pork": { "breakfast": 0.02, "lunch": 0.733, "dinner": 0.756, "snack": 0.0 },
-      "Lamb": { "breakfast": 0.02, "lunch": 0.733, "dinner": 0.756, "snack": 0.0 },
-      "Goat": { "breakfast": 0.02, "lunch": 0.733, "dinner": 0.756, "snack": 0.0 },
-      "Chicken": { "breakfast": 0.02, "lunch": 0.733, "dinner": 0.756, "snack": 0.0 },
-      "Seafood": { "breakfast": 0.02, "lunch": 0.067, "dinner": 0.133, "snack": 0.0 },
-      "Pasta": { "breakfast": 0.0, "lunch": 0.3, "dinner": 0.35, "snack": 0.0 },
-      "Vegetarian": { "breakfast": 0.1, "lunch": 0.35, "dinner": 0.3, "snack": 0.1 },
-      "Vegan": { "breakfast": 0.1, "lunch": 0.35, "dinner": 0.3, "snack": 0.1 }
+      "Breakfast": {
+        "breakfast": 1.0,
+        "lunch": 0.1,
+        "dinner": 0.0,
+        "snack": 0.1
+      },
+      "Dessert": {
+        "breakfast": 0.14,
+        "lunch": 0.0,
+        "dinner": 0.0,
+        "snack": 0.795
+      },
+      "Starter": {
+        "breakfast": 0.05,
+        "lunch": 0.5,
+        "dinner": 0.4,
+        "snack": 0.3
+      },
+      "Side": {
+        "breakfast": 0.1,
+        "lunch": 0.4,
+        "dinner": 0.4,
+        "snack": 0.2
+      },
+      "Beef": {
+        "breakfast": 0.02,
+        "lunch": 0.733,
+        "dinner": 0.756,
+        "snack": 0.0
+      },
+      "Pork": {
+        "breakfast": 0.02,
+        "lunch": 0.733,
+        "dinner": 0.756,
+        "snack": 0.0
+      },
+      "Lamb": {
+        "breakfast": 0.02,
+        "lunch": 0.733,
+        "dinner": 0.756,
+        "snack": 0.0
+      },
+      "Goat": {
+        "breakfast": 0.02,
+        "lunch": 0.733,
+        "dinner": 0.756,
+        "snack": 0.0
+      },
+      "Chicken": {
+        "breakfast": 0.02,
+        "lunch": 0.733,
+        "dinner": 0.756,
+        "snack": 0.0
+      },
+      "Seafood": {
+        "breakfast": 0.02,
+        "lunch": 0.067,
+        "dinner": 0.133,
+        "snack": 0.0
+      },
+      "Pasta": {
+        "breakfast": 0.0,
+        "lunch": 0.3,
+        "dinner": 0.35,
+        "snack": 0.0
+      },
+      "Vegetarian": {
+        "breakfast": 0.1,
+        "lunch": 0.35,
+        "dinner": 0.3,
+        "snack": 0.1
+      },
+      "Vegan": {
+        "breakfast": 0.1,
+        "lunch": 0.35,
+        "dinner": 0.3,
+        "snack": 0.1
+      }
     },
     "category_hints_sources": "Dessert, Beef/Pork/Lamb/Goat/Chicken и Seafood взяты из опроса (q9-q12). Breakfast, Starter, Side, Pasta, Vegetarian, Vegan поставлены вручную. Категорию Miscellaneous специально не задавали: она слишком разнородна.",
     "name_keywords": [
       {
-        "keywords": ["soup", "broth", "stew", "chowder", "bisque", "borscht", "borsch", "goulash"],
-        "weights": { "breakfast": 0.0, "lunch": 0.311, "dinner": 0.05, "snack": 0.0 },
+        "keywords": [ "soup", "broth", "stew", "chowder", "bisque", "borscht", "borsch", "goulash" ],
+        "weights": {
+          "breakfast": 0.0,
+          "lunch": 0.311,
+          "dinner": 0.05,
+          "snack": 0.0
+        },
         "source": "q10 soups 31.1%; остальные значения ручные"
       },
       {
-        "keywords": ["salad", "slaw", "tabbouleh"],
-        "weights": { "breakfast": 0.02, "lunch": 0.356, "dinner": 0.267, "snack": 0.045 },
+        "keywords": [ "salad", "slaw", "tabbouleh" ],
+        "weights": {
+          "breakfast": 0.02,
+          "lunch": 0.356,
+          "dinner": 0.267,
+          "snack": 0.045
+        },
         "source": "q10 salads 35.6%, q11 26.7%, q12 4.5%"
       },
       {
-        "keywords": ["porridge", "oatmeal", "muesli", "granola"],
-        "weights": { "breakfast": 0.419, "lunch": 0.02, "dinner": 0.02, "snack": 0.05 },
+        "keywords": [ "porridge", "oatmeal", "muesli", "granola" ],
+        "weights": {
+          "breakfast": 0.419,
+          "lunch": 0.02,
+          "dinner": 0.02,
+          "snack": 0.05
+        },
         "source": "q9 porridges and cereals 41.9%"
       },
       {
-        "keywords": ["omelette", "omelet", "scrambled", "fried egg", "frittata", "poached egg", "shakshuka", "benedict"],
-        "weights": { "breakfast": 0.279, "lunch": 0.03, "dinner": 0.022, "snack": 0.05 },
+        "keywords": [ "omelette", "omelet", "scrambled", "fried egg", "frittata", "poached egg", "shakshuka", "benedict" ],
+        "weights": {
+          "breakfast": 0.279,
+          "lunch": 0.03,
+          "dinner": 0.022,
+          "snack": 0.05
+        },
         "source": "q9 eggs 27.9%"
       },
       {
-        "keywords": ["cake", "cookie", "brownie", "muffin", "cheesecake", "fudge", "mousse", "pancake", "waffle", "crepe", "croissant", "donut", "doughnut", "gingerbread"],
-        "exclude": ["fish cake", "crab cake", "potato cake", "salmon cake", "tuna cake", "rice cake"],
-        "weights": { "breakfast": 0.14, "lunch": 0.0, "dinner": 0.0, "snack": 0.795 },
+        "keywords": [ "cake", "cookie", "brownie", "muffin", "cheesecake", "fudge", "mousse", "pancake", "waffle", "crepe", "croissant", "donut", "doughnut", "gingerbread" ],
+        "exclude": [ "fish cake", "crab cake", "potato cake", "salmon cake", "tuna cake", "rice cake" ],
+        "weights": {
+          "breakfast": 0.14,
+          "lunch": 0.0,
+          "dinner": 0.0,
+          "snack": 0.795
+        },
         "source": "q9 pastries and sweets 14.0%, q12 79.5%",
         "note": "Слова tart и pudding убраны намеренно: tart бывает и сладким, и солёным (например, с козьим сыром), а pudding это и десерт, и Yorkshire pudding. Для таких блюд работают ингредиенты и категория."
       },
       {
-        "keywords": ["cottage cheese", "curd", "syrniki", "yogurt", "yoghurt"],
-        "weights": { "breakfast": 0.419, "lunch": 0.03, "dinner": 0.333, "snack": 0.523 },
+        "keywords": [ "cottage cheese", "curd", "syrniki", "yogurt", "yoghurt" ],
+        "weights": {
+          "breakfast": 0.419,
+          "lunch": 0.03,
+          "dinner": 0.333,
+          "snack": 0.523
+        },
         "source": "q9 41.9%, q11 33.3%, q12 52.3%"
       },
       {
-        "keywords": ["sandwich", "toast", "wrap", "burger", "bagel"],
-        "weights": { "breakfast": 0.395, "lunch": 0.2, "dinner": 0.15, "snack": 0.2 },
+        "keywords": [ "sandwich", "toast", "wrap", "burger", "bagel" ],
+        "weights": {
+          "breakfast": 0.395,
+          "lunch": 0.2,
+          "dinner": 0.15,
+          "snack": 0.2
+        },
         "source": "допущение: 'light snack' в q9 это бутерброды; остальное ручное"
       },
       {
-        "keywords": ["spaghetti", "lasagne", "lasagna", "pasta", "noodle", "macaroni"],
-        "weights": { "breakfast": 0.0, "lunch": 0.3, "dinner": 0.35, "snack": 0.0 },
+        "keywords": [ "spaghetti", "lasagne", "lasagna", "pasta", "noodle", "macaroni" ],
+        "weights": {
+          "breakfast": 0.0,
+          "lunch": 0.3,
+          "dinner": 0.35,
+          "snack": 0.0
+        },
         "source": "ручные значения"
       },
       {
-        "keywords": ["dumpling", "pierogi", "pelmeni", "vareniki"],
-        "weights": { "breakfast": 0.0, "lunch": 0.15, "dinner": 0.15, "snack": 0.0 },
+        "keywords": [ "dumpling", "pierogi", "pelmeni", "vareniki" ],
+        "weights": {
+          "breakfast": 0.0,
+          "lunch": 0.15,
+          "dinner": 0.15,
+          "snack": 0.0
+        },
         "source": "q11: один свободный ответ про dumplings (1 из 45); значения ручные"
       }
     ]
-  }
+  },
+
+  "allergens": [
+      {
+        "id": "tree_nuts",
+        "label_ru": "Древесные орехи",
+        "label_en": "Tree nuts",
+        "keywords": [
+          "almond",
+          "walnut",
+          "cashew",
+          "hazelnut",
+          "pecan",
+          "pistachio",
+          "brazil nut",
+          "macadamia",
+          "pine nut"
+        ]
+      },
+      {
+        "id": "peanuts",
+        "label_ru": "Арахис",
+        "label_en": "Peanuts",
+        "keywords": [
+          "peanut",
+          "groundnut",
+          "peanut butter",
+          "peanut flour",
+          "peanut paste"
+        ]
+      },
+      {
+        "id": "dairy",
+        "label_ru": "Молочные продукты",
+        "label_en": "Milk and dairy",
+        "keywords": [
+          "milk",
+          "cream",
+          "butter",
+          "ghee",
+          "cheese",
+          "cheddar",
+          "parmesan",
+          "mozzarella",
+          "ricotta",
+          "feta",
+          "yogurt",
+          "yoghurt",
+          "kefir",
+          "buttermilk",
+          "sour cream",
+          "condensed milk",
+          "evaporated milk",
+          "whey",
+          "casein",
+          "milk powder",
+          "skimmed milk",
+          "whole milk",
+          "cream cheese",
+          "mascarpone",
+          "cottage cheese"
+        ]
+      },
+      {
+        "id": "eggs",
+        "label_ru": "Яйца",
+        "label_en": "Eggs",
+        "keywords": [
+          "egg",
+          "egg white",
+          "egg yolk",
+          "albumin",
+          "mayonnaise"
+        ]
+      },
+      {
+        "id": "gluten",
+        "label_ru": "Глютенсодержащие злаки и продукты",
+        "label_en": "Gluten",
+        "keywords": [
+          "wheat",
+          "rye",
+          "barley",
+          "spelt",
+          "semolina",
+          "durum",
+          "bulgur",
+          "couscous",
+          "farina",
+          "wheat flour",
+          "bread flour",
+          "plain flour",
+          "all-purpose flour",
+          "breadcrumbs",
+          "panko",
+          "bread",
+          "pita",
+          "baguette",
+          "sourdough",
+          "pasta",
+          "spaghetti",
+          "macaroni",
+          "noodle",
+          "seitan",
+          "malt"
+        ]
+      },
+      {
+        "id": "seafood",
+        "label_ru": "Рыба и морепродукты",
+        "label_en": "Fish and seafood",
+        "keywords": [
+          "fish",
+          "salmon",
+          "tuna",
+          "cod",
+          "haddock",
+          "mackerel",
+          "trout",
+          "sardine",
+          "herring",
+          "anchovy",
+          "tilapia",
+          "halibut",
+          "sea bass",
+          "prawn",
+          "shrimp",
+          "crab",
+          "lobster",
+          "crayfish",
+          "mussel",
+          "clam",
+          "oyster",
+          "scallop",
+          "squid",
+          "octopus",
+          "fish sauce",
+          "fish stock",
+          "oyster sauce",
+          "shrimp paste"
+        ]
+      },
+      {
+        "id": "soy",
+        "label_ru": "Соя",
+        "label_en": "Soy",
+        "keywords": [
+          "soy",
+          "soya",
+          "soybean",
+          "tofu",
+          "tempeh",
+          "miso",
+          "edamame",
+          "soy sauce",
+          "soya sauce",
+          "soy milk",
+          "soy flour",
+          "soy protein"
+        ]
+      },
+      {
+        "id": "chicken",
+        "label_ru": "Курица (пищевое ограничение)",
+        "label_en": "Chicken restriction",
+        "keywords": [
+          "chicken",
+          "chicken breast",
+          "chicken thigh",
+          "chicken wing",
+          "chicken leg",
+          "chicken drumstick",
+          "chicken liver",
+          "chicken stock",
+          "chicken broth",
+          "chicken bouillon",
+          "chicken fat",
+          "chicken extract"
+        ]
+      }
+    ]
 }

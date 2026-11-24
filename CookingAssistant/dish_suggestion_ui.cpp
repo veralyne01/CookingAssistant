@@ -13,9 +13,8 @@ namespace UI {
         return categories[choice - 1];
     }
     void show_result(User& user, std::string category) {
-        static std::unordered_set<std::string> shown;
 
-        auto dish = Picker::suggest(user, shown, category);
+        auto dish = Picker::find_suitable_dish(user, category);
 
         if (!dish) {
             std::cout << "\nNo suitable meal found.\n";

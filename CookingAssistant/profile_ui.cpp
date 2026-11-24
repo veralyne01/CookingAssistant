@@ -1,6 +1,7 @@
 #include "user.h"
 #include "ui.h"
 #include "groups.h"
+#include "auxiliary.h"
 #include "enums.h"
 #include <iostream>
 #include <fstream> 
@@ -8,6 +9,9 @@
 #include <cstdlib>
 #include "profile_manager.h"
 #include "meal_db_search.h"
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 namespace UI {
 	void fill_gender(User& user) {
@@ -188,6 +192,7 @@ namespace UI {
 	}
 
 	void choose_allergies(User& user) {
+		json rules = Auxiliary::load_json("meal_rules.json");
 		system("cls");
 		std::cout << "Choose your allergies (Enter the numbers separated by a space):\n" <<
 			"1. Nuts\n2. Peanuts\n3. Dairy\n" <<
@@ -195,6 +200,71 @@ namespace UI {
 			"7. Soy\n8. Chicken\n9. Another\n> ";
 		std::string input;
 
+		std::cout << "Enter numbers separated by spaces: ";
+		std::cin.ignore(
+			std::numeric_limits<std::streamsize>::max(),
+			'\n'
+		);
+		std::getline(std::cin, input);
+
+		auto result = Auxiliary::parse_number_line(input, 1, 8);
+
+		if (!result)
+		{
+			std::cout << "Invalid input!\n";
+		}
+		else
+		{
+			for (int number : *result)
+			{
+				switch (number) {
+				case 1:
+					add_allergies_from_json(user, "tree_nuts", rules);
+					break;
+				case 2:
+					add_allergies_from_json(user, "peanuts", rules);
+					break;
+				case 3:
+					add_allergies_from_json(user, "dairy", rules);
+					break;
+				case 4:
+					add_allergies_from_json(user, "eggs", rules);
+					break;
+				case 5:
+					add_allergies_from_json(user, "gluten", rules);
+					break;
+				case 6:
+					add_allergies_from_json(user, "seafood", rules);
+					break;
+				case 7:
+					add_allergies_from_json(user, "soy", rules);
+					break;
+				case 8:
+					add_allergies_from_json(user, "chicken", rules);
+					break;
+				case 9:
+				default:
+					break;
+				}
+				
+			}
+		}
+	}
+
+	void add_allergies_from_json(User& user, const std::string category, json& j) {
+		const auto& groups = j.at("allergens");
+
+		for (const auto& group : groups)
+		{
+			if (group.at("id") == category)
+			{
+				for (const auto& keyword : group.at("keywords"))
+				{
+					user.allergens.push_back(keyword.get<std::string>());
+				}
+				return;
+			}
+		}
 	}
 
 	void profile_menu(User& user) {
@@ -225,6 +295,7 @@ namespace UI {
 		fill_target(user);
 		fill_activity_level(user);
 		ask_calorie_norm(user);
+		choose_allergies(user);
 		ProfileManager::save_user_to_file(user);
 	}
 

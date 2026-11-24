@@ -12,7 +12,6 @@ double User::choose_coef(const std::string& level) {
     auto it = Values::activity_coefficients.find(level);
     return it == Values::activity_coefficients.end() ? 0.0 : it->second;
 }
-//целевой калораж 
 double User::count_target_calories(User user) {
 	double prop_calories = count_appr_calories(user);
 	if (user.target == "weight_loss") return 0.85 * prop_calories;

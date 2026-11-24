@@ -9,6 +9,7 @@ public:
 	std::vector<std::string> allergens;
 	std::vector<std::string> disliked_products;
 	std::vector<std::string> liked_products;
+	std::vector<std::string> disliked_dishes;
 	double weight = 0;
 	double height = 0;
 	int age = 0;
