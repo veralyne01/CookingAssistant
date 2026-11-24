@@ -3,10 +3,8 @@
 
 namespace NutritionCalculator {
 
-    Nutrition calculate_ingredient(
-        double weight_grams,
-        const Nutrition& per_100g
-    ) {
+    Nutrition calculate_ingredient(double weight_grams, const Nutrition& per_100g)
+    {
         const double factor = weight_grams / 100.0;
 
         return {

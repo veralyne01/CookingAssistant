@@ -105,7 +105,6 @@ namespace {
         else if (raw_category == "Dessert" || raw_category == "Side" || raw_category == "Starter") d.category = "snack";
         d.area = text(m, "strArea");
         d.cuisine = d.area;
-        d.cuisine = d.area;
         if (d.area.empty()) d.area = text(m, "strCountry");
         d.instructions = text(m, "strInstructions");
 

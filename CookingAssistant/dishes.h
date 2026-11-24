@@ -6,8 +6,6 @@
 #include <string>
 #include <optional>
 
-
-
 struct Nutrition {
     double calories = 0.0;
     double proteins = 0.0;

@@ -119,6 +119,10 @@
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
     </Manifest>
+    <PreBuildEvent>
+      <Command>if not exist "$(OutDir)data" mkdir "$(OutDir)data"
+copy /Y "$(ProjectDir)data\cookingassistant_foods.sqlite" "$(OutDir)data\cookingassistant_foods.sqlite"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -151,6 +155,7 @@
     <ClCompile Include="CookingAssistant\profile_manager.cpp" />
     <ClCompile Include="CookingAssistant\profile_ui.cpp" />
     <ClCompile Include="CookingAssistant\reasoner.cpp" />
+    <ClCompile Include="CookingAssistant\sql_calorage_search.cpp" />
     <ClCompile Include="CookingAssistant\user.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +171,7 @@
     <ClInclude Include="CookingAssistant\profile_manager.h" />
     <ClInclude Include="CookingAssistant\reasoner.h" />
     <ClInclude Include="CookingAssistant\sqltypes.h" />
+    <ClInclude Include="CookingAssistant\sqlmanager.h" />
     <ClInclude Include="CookingAssistant\ui.h" />
     <ClInclude Include="CookingAssistant\user.h" />
   </ItemGroup>
