@@ -1,12 +1,32 @@
 #pragma once
-#include <optional>
-#include <string>
-#include <unordered_set>
-#include <vector>
+
 #include "dishes.h"
-#include "user.h"
+#include <vector>
+#include <string>
 
 namespace Picker {
-    std::vector<Dish> remove_allergens(std::vector<Dish> dishes, User& user);
-    std::vector<Dish> Picker::find_candidates(User& user, const std::unordered_set<std::string>& already_shown, std::string category);
+
+    struct ScoredDish {
+        Dish dish;
+        double parameter;
+    };
+
+    std::vector<Dish> remove_allergens(
+        std::vector<Dish> dishes,
+        const User& user
+    );
+
+    std::vector<Dish> find_candidates(
+        const User& user,
+        const std::string& category
+    );
+
+    std::vector<ScoredDish> get_scored_candidates(
+        const std::vector<Dish>& dishes,
+        const User& user
+    );
+
+    std::vector<ScoredDish> sort_candidates(
+        std::vector<ScoredDish> dishes
+    );
 }
