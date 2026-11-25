@@ -9,5 +9,6 @@
   "calorie_norm": 0,
   "allergens": [],
   "liked_products": [],
-  "disliked_products": []
+  "disliked_products": [],
+  "disliked_dishes": []
 }

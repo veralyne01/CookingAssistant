@@ -1,12 +1,13 @@
 #include "user.h"
 #include "ui.h"
 #include "groups.h"
-#include "auxiliary.h"
+#include "Auxiliary.h"
 #include "enums.h"
 #include <iostream>
 #include <fstream> 
 #include <string>
 #include <cstdlib>
+#include <limits>
 #include "profile_manager.h"
 #include "meal_db_search.h"
 #include <nlohmann/json.hpp>
@@ -191,80 +192,113 @@ namespace UI {
 		}
 	}
 
-	void choose_allergies(User& user) {
-		json rules = Auxiliary::load_json("meal_rules.json");
-		system("cls");
-		std::cout << "Choose your allergies (Enter the numbers separated by a space):\n" <<
-			"1. Nuts\n2. Peanuts\n3. Dairy\n" <<
-			"4. Eggs\n5. Gluten\n6. Seafood\n" <<
-			"7. Soy\n8. Chicken\n9. Another\n> ";
-		std::string input;
+	std::vector<std::string> add_category_from_json(
+		std::vector<std::string> list,
+		const std::string& section,
+		const std::string& category,
+		const json& rules
+	) {
+		const auto& groups = rules.at(section);
 
-		std::cout << "Enter numbers separated by spaces: ";
-		std::cin.ignore(
-			std::numeric_limits<std::streamsize>::max(),
-			'\n'
-		);
-		std::getline(std::cin, input);
-
-		auto result = Auxiliary::parse_number_line(input, 1, 8);
-
-		if (!result)
-		{
-			std::cout << "Invalid input!\n";
-		}
-		else
-		{
-			for (int number : *result)
-			{
-				switch (number) {
-				case 1:
-					add_allergies_from_json(user, "tree_nuts", rules);
-					break;
-				case 2:
-					add_allergies_from_json(user, "peanuts", rules);
-					break;
-				case 3:
-					add_allergies_from_json(user, "dairy", rules);
-					break;
-				case 4:
-					add_allergies_from_json(user, "eggs", rules);
-					break;
-				case 5:
-					add_allergies_from_json(user, "gluten", rules);
-					break;
-				case 6:
-					add_allergies_from_json(user, "seafood", rules);
-					break;
-				case 7:
-					add_allergies_from_json(user, "soy", rules);
-					break;
-				case 8:
-					add_allergies_from_json(user, "chicken", rules);
-					break;
-				case 9:
-				default:
-					break;
+		for (const auto& group : groups) {
+			if (group.at("id").get<std::string>() == category) {
+				for (const auto& keyword : group.at("keywords")) {
+					list.push_back(keyword.get<std::string>());
 				}
-				
+				break;
 			}
 		}
+
+		return list;
 	}
 
-	void add_allergies_from_json(User& user, const std::string category, json& j) {
-		const auto& groups = j.at("allergens");
 
-		for (const auto& group : groups)
-		{
-			if (group.at("id") == category)
-			{
-				for (const auto& keyword : group.at("keywords"))
-				{
-					user.allergens.push_back(keyword.get<std::string>());
-				}
-				return;
-			}
+	// Выбор категорий из указанного раздела JSON.
+	std::vector<std::string> choose_categories(
+		const std::string& section,
+		const std::vector<std::pair<std::string, std::string>>& options
+	) {
+		json rules = Auxiliary::load_json("meal_rules.json");
+
+		std::vector<std::string> selected;
+
+		std::cout << "\nChoose categories (enter numbers separated by spaces):\n";
+
+		for (size_t i = 0; i < options.size(); ++i) {
+			std::cout << i + 1 << ". " << options[i].first << '\n';
 		}
+
+		std::cout << "0. Finish selection\n";
+		std::cout << "> ";
+
+		std::string input;
+		if (std::cin.peek() == '\n') {
+			std::cin.ignore();
+		}
+		std::getline(std::cin, input);
+
+		std::optional<std::vector<int>> parsed_choices =
+			Auxiliary::parse_number_line(input, 0, options.size());
+		if (!parsed_choices.has_value()) {
+			std::cout << "Invalid input. Try again.\n";
+			return selected;
+		}
+
+		const std::vector<int>& choices = parsed_choices.value();
+
+		for (int choice : choices) {
+			if (choice == 0) {
+				continue;
+			}
+
+			selected = add_category_from_json(
+				selected,
+				section,
+				options[choice - 1].second,
+				rules
+			);
+		}
+
+		return selected;
+	}
+
+	std::vector<std::string> choose_allergens() {
+		const std::vector<std::pair<std::string, std::string>> options = {
+			{"Nuts", "tree_nuts"},
+			{"Peanuts", "peanuts"},
+			{"Dairy", "dairy"},
+			{"Eggs", "eggs"},
+			{"Gluten", "gluten"},
+			{"Seafood", "seafood"},
+			{"Soy", "soy"},
+			{"Chicken", "chicken"}
+		};
+
+		return choose_categories("allergens", options);
+	}
+
+	std::vector<std::string> choose_products() {
+		const std::vector<std::pair<std::string, std::string>> options = {
+			{"Meat", "meat"},
+			{"Poultry", "poultry"},
+			{"Fish and seafood", "fish_seafood"},
+			{"Sweets and baking", "sweets_baking"},
+			{"Dairy", "dairy_fresh"},
+			{"Eggs", "eggs"},
+			{"Breakfast cereals", "breakfast_cereals"},
+			{"Fruits", "fruits"},
+			{"Pasta and noodles", "pasta_noodles"},
+			{"Grains and sides", "grains_sides"},
+			{"Potatoes", "potatoes"},
+			{"Legumes", "legumes"},
+			{"Fresh vegetables", "vegetables_fresh"},
+			{"Cooked vegetables", "vegetables_cooked"},
+			{"Bread and sandwiches", "bread_sandwich"},
+			{"Nuts and seeds", "nuts_seeds"},
+			{"Cheese", "cheese_cooking"}
+		};
+
+		return choose_categories("groups", options);
 	}
 
 	void profile_menu(User& user) {
@@ -284,6 +318,15 @@ namespace UI {
 		std::cout << "Activity level:\t" << Values::activity_levels.at(user.activity_level) << "\n";
 		std::cout << "Calorie norm:\t";
 		(user.calorie_norm == 0) ? std::cout << "-\n" : std::cout << user.calorie_norm << "\n";
+		std::cout << "Allergens:\t";
+		Auxiliary::print_string_vector(user.allergens);
+		std::cout << "Liked products:\t";
+		Auxiliary::print_string_vector(user.liked_products);
+		std::cout << "Disliked products:\t";
+		Auxiliary::print_string_vector(user.disliked_products);
+		std::cout << "Disliked dishes:\t";
+		Auxiliary::print_string_vector(user.disliked_dishes);
+		
 	}
 
 	void input_profile(User& user) {
@@ -295,13 +338,18 @@ namespace UI {
 		fill_target(user);
 		fill_activity_level(user);
 		ask_calorie_norm(user);
-		choose_allergies(user);
+		std::cout << "Enter allergies\n";
+		user.allergens = choose_allergens();
+		std::cout << "Enter products that you like\n";
+		user.liked_products = choose_products();
+		std::cout << "Enter products that you dislike\n";
+		user.disliked_products = choose_products();
 		ProfileManager::save_user_to_file(user);
 	}
 
     void edit_profile(User& user) {
-        std::cout << "Choose option to edit:\n1. Name\n2. Age\n3. Gender\n4. Weight\n5. Height\n6. Target\n7. Activity level\n";
-        switch (read_menu_option(1, 7)) {
+        std::cout << "Choose option to edit:\n1. Name\n2. Age\n3. Gender\n4. Weight\n5. Height\n6. Target\n7. Activity level\n8. Allergies\n9. Liked products\n10. Disliked products\n";
+        switch (read_menu_option(1, 10)) {
         case 1: fill_name(user); break;
         case 2: fill_age(user); ask_calorie_norm(user); break;
         case 3: fill_gender(user); ask_calorie_norm(user); break;
@@ -309,6 +357,9 @@ namespace UI {
         case 5: fill_height(user); ask_calorie_norm(user); break;
         case 6: fill_target(user); ask_calorie_norm(user); break;
         case 7: fill_activity_level(user); ask_calorie_norm(user); break;
+		case 8: user.allergens = choose_allergens(); break;
+		case 9: user.liked_products = choose_products(); break;
+		case 10: user.disliked_products = choose_products(); break;
         }
         ProfileManager::save_user_to_file(user);
     }

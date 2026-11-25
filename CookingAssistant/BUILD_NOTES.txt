@@ -1,0 +1,17 @@
+Cooking Assistant
+
+The source archive did not include a Visual Studio solution or project file.
+Add recipe_storage.cpp to the existing Visual Studio project if source files
+are listed explicitly.
+
+Build with C++17 or newer. The project requires nlohmann/json, SQLite3, and
+Windows WinHTTP libraries.
+
+Runtime JSON files:
+- profile.json stores the user profile, including disliked_dishes.
+- local_recipes.json stores liked recipes, recipes already shown, and local
+  recipe rotation history for menu generation.
+- favorites.json stores favorite recipes and favorite menus.
+
+The optional local nutrition database is expected at
+ data/cookingassistant_foods.sqlite.

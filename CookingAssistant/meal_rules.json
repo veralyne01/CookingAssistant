@@ -1,0 +1,623 @@
+{
+  "meta": {
+    "version": 1,
+    "description": "Правила для оценки того, насколько блюдо подходит под приём пищи (breakfast, lunch, dinner, snack). Главный сигнал: набор ингредиентов. Категория и название блюда лежат в разделе extra_signals и необязательны.",
+    "how_weights_were_made": "Вес группы для приёма пищи это доля респондентов (из survey_results.json), которые ели этот тип блюд на этом приёме. Если в опросе такого варианта нет, вес поставлен вручную и группа перечислена в manual_weights. Ручные значения нужно проверить по размеченным блюдам.",
+    "sample_note": "47 респондентов, на каждый вопрос отвечало 43-45 человек. Разница в несколько процентных пунктов это шум.",
+    "matching": {
+      "case_insensitive": true,
+      "mode": "substring",
+      "description": "Слово из keywords ищется как подстрока в названии ингредиента TheMealDB (strIngredientN). Слова записаны основами, поэтому 'egg' найдёт Egg, Eggs, Egg Yolks. Если в названии есть слово из exclude, группа не подходит. Каждый ингредиент относится к первой подходящей группе, порядок групп в файле важен. Группа считается один раз на блюдо, независимо от числа совпавших ингредиентов.",
+      "weak_factor": 0.5,
+      "weak_description": "Совпадение по weak_keywords считается с коэффициентом weak_factor: так помечены слова, которые часто встречаются в блюдах любого типа (sugar, milk, egg, tomato)."
+    },
+    "scoring": {
+      "ingredient_fit": "Для приёма пищи M: 1 - произведение по найденным группам g от (1 - k * weights[M]), где k равно 1 для обычного совпадения и weak_factor для слабого. Комбинации из combos считаются как ещё одна найденная группа. Так оценка не растёт просто от числа ингредиентов.",
+      "unknown_policy": "Если ни одна группа не найдена, ingredient_fit не определён (null), а не равен нулю. В таком случае используйте только extra_signals или не оценивайте блюдо.",
+      "combine": {
+        "description": "Итоговая оценка это среднее доступных сигналов с весами, пересчитанными на их сумму. Начальные значения, которые нужно подобрать по размеченным блюдам.",
+        "weights": { "category": 0.4, "name": 0.3, "ingredients": 0.3 }
+      },
+      "normalize_over_meals": true,
+      "normalize_description": "Итоговые оценки блюда для четырёх приёмов пищи делятся на наибольшую из них, и лучший приём пищи получает 1,0. Так оценка отвечает на вопрос 'на какой приём пищи блюдо подходит больше', а не 'как часто такие блюда едят'. Без нормировки блюда из редких в опросе групп (рыба 6,7% и 13,3%) всегда получали бы низкие оценки. Популярность типа блюд у пользователя это отдельный критерий (предпочтения), его нельзя смешивать с этим.",
+      "min_fit": 0.3,
+      "min_fit_description": "Порог применяется к нормированной оценке: блюдо ниже порога для запрошенного приёма пищи не предлагается. Начальное значение, подберите по размеченным блюдам."
+    },
+    "limitations": [
+      "Обед и ужин по ингредиентам почти не различаются: в опросе доля мясных блюд 73,3% и 75,6%. Различия есть только у супов и салатов (чаще на обед) и у молочного (чаще на ужин). Если нужно строго разделять, используйте общий класс 'основной приём пищи'.",
+      "Супы по ингредиентам распознаются плохо (бульон встречается и в рагу, и в ризотто). Для них надёжнее название блюда.",
+      "В опросе пасту, картофель, зерновые гарниры и бобовые назвали только в свободных ответах, поэтому по опросу их вес занижен. Для них стоят ручные значения.",
+      "Названия ингредиентов в TheMealDB английские. Все keywords написаны по-английски."
+    ]
+  },
+
+  "meals": ["breakfast", "lunch", "dinner", "snack"],
+
+  "meal_shares": {
+    "description": "Доля респондентов, которые едят на этом приёме пищи (вопрос q7). Это не вес группы, а справочное число: например, можно меньше доверять оценкам для приёма пищи, который мало кто ест.",
+    "breakfast": 0.681,
+    "lunch": 0.787,
+    "dinner": 0.957,
+    "snack": 0.617
+  },
+
+  "groups": [
+    {
+      "id": "meat",
+      "label_ru": "Мясо (говядина, свинина, баранина, колбасные изделия)",
+      "keywords": ["beef", "pork", "lamb", "goat", "veal", "mince", "steak", "brisket", "ribs", "oxtail", "ham", "gammon", "bacon", "sausage", "chorizo", "salami", "pepperoni", "prosciutto", "pancetta"],
+      "weak_keywords": [],
+      "exclude": ["mincemeat", "graham", "mince pie", "hamburger bun", "goat cheese", "goats cheese", "goat's cheese", "goat milk", "goats milk"],
+      "weights": { "breakfast": 0.05, "lunch": 0.733, "dinner": 0.756, "snack": 0.02 },
+      "manual_weights": ["breakfast", "snack"],
+      "survey_basis": "q10 meat dishes 73.3%, q11 meat dishes 75.6%; q9 один свободный ответ про мясо на завтрак",
+      "confidence": "high"
+    },
+    {
+      "id": "poultry",
+      "label_ru": "Птица",
+      "keywords": ["chicken", "turkey", "duck", "goose", "quail"],
+      "weak_keywords": [],
+      "exclude": ["chicken stock", "chicken broth", "chicken bouillon", "chicken seasoning"],
+      "weights": { "breakfast": 0.05, "lunch": 0.733, "dinner": 0.756, "snack": 0.02 },
+      "manual_weights": ["breakfast", "snack"],
+      "survey_basis": "q10 и q11 'meat dishes': скорее всего включают птицу (q4: птица 55,3%, мясо 57,4%)",
+      "confidence": "medium"
+    },
+    {
+      "id": "fish_seafood",
+      "label_ru": "Рыба и морепродукты",
+      "keywords": ["salmon", "tuna", "cod", "haddock", "mackerel", "trout", "sardine", "herring", "sea bass", "tilapia", "halibut", "prawn", "shrimp", "squid", "mussel", "clam", "oyster", "crab", "lobster", "scallop"],
+      "weak_keywords": ["fish"],
+      "exclude": ["fish sauce", "fish stock", "fish seasoning"],
+      "weights": { "breakfast": 0.02, "lunch": 0.067, "dinner": 0.133, "snack": 0.0 },
+      "manual_weights": ["breakfast", "snack"],
+      "survey_basis": "q10 fish dishes 6.7%, q11 fish dishes 13.3%",
+      "confidence": "high"
+    },
+    {
+      "id": "sweets_baking",
+      "label_ru": "Сладкое и выпечка",
+      "keywords": ["chocolate", "cocoa", "jam", "caramel", "marzipan", "condensed milk", "marshmallow", "sprinkles", "icing sugar", "biscuit", "cookie", "custard", "ice cream"],
+      "weak_keywords": ["sugar", "honey", "syrup", "vanilla", "baking powder"],
+      "exclude": ["fish", "sugar snap"],
+      "weights": { "breakfast": 0.14, "lunch": 0.0, "dinner": 0.0, "snack": 0.795 },
+      "manual_weights": ["lunch", "dinner"],
+      "survey_basis": "q9 pastries and sweets 14.0%, q12 pastries and sweets 79.5%",
+      "confidence": "high"
+    },
+    {
+      "id": "dairy_fresh",
+      "label_ru": "Молочное и творожное",
+      "keywords": ["cottage cheese", "curd", "quark", "ricotta", "yogurt", "yoghurt", "kefir", "skyr", "fromage frais"],
+      "weak_keywords": ["milk", "cream cheese", "mascarpone"],
+      "exclude": ["coconut milk", "almond milk", "soy milk", "oat milk", "rice milk"],
+      "weights": { "breakfast": 0.419, "lunch": 0.03, "dinner": 0.333, "snack": 0.523 },
+      "manual_weights": ["lunch"],
+      "survey_basis": "q9 cottage cheese and dairy 41.9%, q11 33.3%, q12 52.3%",
+      "confidence": "high"
+    },
+    {
+      "id": "eggs",
+      "label_ru": "Яйца",
+      "keywords": [],
+      "weak_keywords": ["egg"],
+      "exclude": ["eggplant", "egg plant", "egg noodle", "eggnog"],
+      "weights": { "breakfast": 0.279, "lunch": 0.03, "dinner": 0.022, "snack": 0.05 },
+      "manual_weights": ["lunch", "snack"],
+      "survey_basis": "q9 eggs 27.9%, q11 один свободный ответ про яичницу (1 из 45). Яйцо есть и в выпечке, и в соусах, поэтому совпадение слабое",
+      "confidence": "medium"
+    },
+    {
+      "id": "breakfast_cereals",
+      "label_ru": "Каши и хлопья",
+      "keywords": ["oats", "oatmeal", "porridge", "semolina", "muesli", "granola", "cornflakes", "cereal", "bran"],
+      "weak_keywords": [],
+      "exclude": ["goat"],
+      "weights": { "breakfast": 0.419, "lunch": 0.02, "dinner": 0.02, "snack": 0.05 },
+      "manual_weights": ["lunch", "dinner", "snack"],
+      "survey_basis": "q9 porridges and cereals 41.9%. Слово 'oats' входит в 'goats', поэтому goat в exclude",
+      "confidence": "high"
+    },
+    {
+      "id": "fruits",
+      "label_ru": "Фрукты и ягоды",
+      "keywords": ["apple", "banana", "strawberr", "blueberr", "raspberr", "blackberr", "cherr", "peach", "pear", "apricot", "plum", "melon", "mango", "pineapple", "kiwi", "grape", "nectarine", "fig", "berries", "raisin", "sultana"],
+      "weak_keywords": ["orange"],
+      "exclude": ["pearl", "plum tomato", "cherry tomato", "grapeseed", "orange juice", "orange zest", "orange peel"],
+      "weights": { "breakfast": 0.15, "lunch": 0.02, "dinner": 0.04, "snack": 0.705 },
+      "manual_weights": ["breakfast", "lunch"],
+      "survey_basis": "q12 fruits 70.5%; q11 один свободный ответ про фрукты (lactose-free cottage cheese, fruits)",
+      "confidence": "high"
+    },
+    {
+      "id": "pasta_noodles",
+      "label_ru": "Паста и лапша",
+      "keywords": ["spaghetti", "penne", "macaroni", "fusilli", "tagliatelle", "lasagne", "lasagna", "linguine", "rigatoni", "farfalle", "tortellini", "ravioli", "noodle", "pasta", "orzo", "vermicelli", "gnocchi", "cannelloni"],
+      "weak_keywords": [],
+      "exclude": [],
+      "weights": { "breakfast": 0.0, "lunch": 0.3, "dinner": 0.35, "snack": 0.0 },
+      "manual_weights": ["breakfast", "lunch", "dinner", "snack"],
+      "survey_basis": "В опросе пасту назвали только в двух свободных ответах про ужин (2 из 45); кухня Italian самая популярная из зарубежных (31,9%). Значения ручные",
+      "confidence": "low"
+    },
+    {
+      "id": "grains_sides",
+      "label_ru": "Крупы и рис как гарнир",
+      "keywords": ["rice", "basmati", "couscous", "bulgur", "quinoa", "barley", "buckwheat", "millet", "polenta"],
+      "weak_keywords": [],
+      "exclude": ["rice vinegar", "rice wine", "rice flour", "rice paper", "rice noodle", "pearl barley soup mix"],
+      "weights": { "breakfast": 0.05, "lunch": 0.089, "dinner": 0.022, "snack": 0.02 },
+      "manual_weights": ["breakfast", "snack"],
+      "survey_basis": "q10 свободные ответы про крупы 4 из 45 (8,9%), q11 один (2,2%). Эти значения занижены: крупы назвали только в свободных ответах",
+      "confidence": "low"
+    },
+    {
+      "id": "potatoes",
+      "label_ru": "Картофель",
+      "keywords": ["potato"],
+      "weak_keywords": [],
+      "exclude": ["potato starch", "potato flour"],
+      "weights": { "breakfast": 0.03, "lunch": 0.25, "dinner": 0.25, "snack": 0.05 },
+      "manual_weights": ["breakfast", "lunch", "dinner", "snack"],
+      "survey_basis": "В опросе картофель упомянут только в свободных ответах (q10: 1, q11: 2 из 45). Значения ручные",
+      "confidence": "low"
+    },
+    {
+      "id": "legumes",
+      "label_ru": "Бобовые",
+      "keywords": ["bean", "lentil", "chickpea", "peas", "split pea"],
+      "weak_keywords": [],
+      "exclude": ["vanilla bean", "coffee bean", "bean sprout"],
+      "weights": { "breakfast": 0.02, "lunch": 0.2, "dinner": 0.2, "snack": 0.02 },
+      "manual_weights": ["breakfast", "lunch", "dinner", "snack"],
+      "survey_basis": "q4: бобовые любят только 2,1% респондентов, в вопросах по приёмам пищи их нет. Значения ручные",
+      "confidence": "low"
+    },
+    {
+      "id": "vegetables_fresh",
+      "label_ru": "Свежие овощи и салатные",
+      "keywords": ["lettuce", "cucumber", "radish", "rocket", "arugula", "iceberg", "salad leaves", "cress"],
+      "weak_keywords": ["tomato"],
+      "exclude": ["tomato puree", "tomato paste", "tomato ketchup", "tomato sauce", "passata"],
+      "weights": { "breakfast": 0.02, "lunch": 0.356, "dinner": 0.267, "snack": 0.091 },
+      "manual_weights": ["breakfast"],
+      "survey_basis": "q10 salads 35.6%, q11 salads 26.7%, q12 vegetables 9.1%",
+      "confidence": "medium"
+    },
+    {
+      "id": "vegetables_cooked",
+      "label_ru": "Овощи для горячих блюд",
+      "keywords": ["carrot", "courgette", "zucchini", "broccoli", "cauliflower", "cabbage", "aubergine", "eggplant", "spinach", "kale", "leek", "pumpkin", "squash", "green bean", "sweetcorn", "asparagus", "mushroom", "red pepper", "green pepper", "yellow pepper", "bell pepper"],
+      "weak_keywords": [],
+      "exclude": ["red pepper flakes", "carrot cake"],
+      "weights": { "breakfast": 0.03, "lunch": 0.3, "dinner": 0.3, "snack": 0.04 },
+      "manual_weights": ["breakfast", "lunch", "dinner", "snack"],
+      "survey_basis": "q4: овощи любят 29,8%, но в вопросах по приёмам пищи отдельного варианта нет. Значения ручные",
+      "confidence": "low"
+    },
+    {
+      "id": "bread_sandwich",
+      "label_ru": "Хлеб и бутерброды",
+      "keywords": ["bread", "toast", "bagel", "baguette", "ciabatta", "tortilla", "pita", "wrap", "croissant", "sourdough", "english muffin"],
+      "weak_keywords": ["bun"],
+      "exclude": ["breadcrumb", "bunch", "bread flour"],
+      "weights": { "breakfast": 0.395, "lunch": 0.2, "dinner": 0.15, "snack": 0.2 },
+      "manual_weights": ["lunch", "dinner", "snack"],
+      "survey_basis": "Допущение: вариант q9 'light snack' (39,5%) считаем бутербродами и тостами. Остальные значения ручные",
+      "confidence": "low"
+    },
+    {
+      "id": "nuts_seeds",
+      "label_ru": "Орехи и семечки",
+      "keywords": ["almond", "walnut", "cashew", "peanut", "hazelnut", "pistachio", "pecan", "sunflower seed", "pumpkin seed", "sesame seed", "chia", "flaxseed"],
+      "weak_keywords": [],
+      "exclude": ["peanut oil", "almond milk", "almond extract"],
+      "weights": { "breakfast": 0.15, "lunch": 0.03, "dinner": 0.03, "snack": 0.2 },
+      "manual_weights": ["breakfast", "lunch", "dinner", "snack"],
+      "survey_basis": "В вопросах по приёмам пищи нет варианта про орехи. Значения ручные",
+      "confidence": "low"
+    },
+    {
+      "id": "cheese_cooking",
+      "label_ru": "Сыр для готовки",
+      "keywords": ["cheese", "cheddar", "parmesan", "mozzarella", "feta", "gruyere", "halloumi", "gouda", "brie", "emmental", "pecorino"],
+      "weak_keywords": [],
+      "exclude": [],
+      "weights": { "breakfast": 0.12, "lunch": 0.25, "dinner": 0.25, "snack": 0.1 },
+      "manual_weights": ["breakfast", "lunch", "dinner", "snack"],
+      "survey_basis": "Ручные значения. Творожные продукты и мягкие сыры (cottage cheese, cream cheese, ricotta) попадают в dairy_fresh, потому что эта группа стоит выше в списке",
+      "confidence": "low"
+    }
+  ],
+
+  "combos": [
+    {
+      "id": "soup_like",
+      "label_ru": "Похоже на суп (бульон и овощи/крупа/мясо)",
+      "requires_keywords_any": ["stock", "broth", "bouillon"],
+      "requires_groups_any": ["potatoes", "vegetables_cooked", "legumes", "grains_sides", "pasta_noodles", "meat", "poultry"],
+      "weights": { "breakfast": 0.0, "lunch": 0.311, "dinner": 0.05, "snack": 0.0 },
+      "manual_weights": ["breakfast", "dinner", "snack"],
+      "survey_basis": "q10 soups 31.1%",
+      "confidence": "low",
+      "note": "Бульон встречается и в рагу, и в ризотто. Слово soup в названии блюда надёжнее (см. extra_signals.name_keywords)."
+    },
+    {
+      "id": "baking",
+      "label_ru": "Похоже на выпечку (мука и сахар)",
+      "requires_keywords_all": ["flour", "sugar"],
+      "requires_groups_any": [],
+      "weights": { "breakfast": 0.14, "lunch": 0.0, "dinner": 0.0, "snack": 0.795 },
+      "manual_weights": ["lunch", "dinner"],
+      "survey_basis": "q9 pastries and sweets 14.0%, q12 79.5%",
+      "confidence": "medium"
+    }
+  ],
+
+  "ignored_on_purpose": {
+    "description": "Ингредиенты без информации о приёме пищи: они есть почти везде. Их нет ни в одной группе, и отсутствие совпадения для них не считается пробелом в правилах.",
+    "keywords": ["salt", "black pepper", "white pepper", "cayenne", "oil", "water", "flour", "butter", "onion", "garlic", "parsley", "coriander", "basil", "thyme", "oregano", "rosemary", "bay leaf", "cumin", "paprika", "cinnamon", "nutmeg", "ginger", "vinegar", "lemon", "lime", "stock cube", "double cream", "single cream", "sour cream", "soy sauce", "ketchup", "mustard", "mayonnaise"]
+  },
+
+  "extra_signals": {
+    "description": "Необязательные сигналы. Они надёжнее ингредиентов, поэтому в combine им дан больший вес. Если поле strCategory пустое или нет совпадений, этот сигнал просто не учитывается. У записи в name_keywords может быть необязательное поле exclude: если в названии блюда есть слово из него, запись не применяется. Если названию блюда подходит несколько записей, берётся максимум по приёму пищи.",
+    "category_hints": {
+      "note": "Ключи это значения поля strCategory в TheMealDB. Если категория не названа здесь, сигнал не используется.",
+      "Breakfast": {
+        "breakfast": 1.0,
+        "lunch": 0.1,
+        "dinner": 0.0,
+        "snack": 0.1
+      },
+      "Dessert": {
+        "breakfast": 0.14,
+        "lunch": 0.0,
+        "dinner": 0.0,
+        "snack": 0.795
+      },
+      "Starter": {
+        "breakfast": 0.05,
+        "lunch": 0.5,
+        "dinner": 0.4,
+        "snack": 0.3
+      },
+      "Side": {
+        "breakfast": 0.1,
+        "lunch": 0.4,
+        "dinner": 0.4,
+        "snack": 0.2
+      },
+      "Beef": {
+        "breakfast": 0.02,
+        "lunch": 0.733,
+        "dinner": 0.756,
+        "snack": 0.0
+      },
+      "Pork": {
+        "breakfast": 0.02,
+        "lunch": 0.733,
+        "dinner": 0.756,
+        "snack": 0.0
+      },
+      "Lamb": {
+        "breakfast": 0.02,
+        "lunch": 0.733,
+        "dinner": 0.756,
+        "snack": 0.0
+      },
+      "Goat": {
+        "breakfast": 0.02,
+        "lunch": 0.733,
+        "dinner": 0.756,
+        "snack": 0.0
+      },
+      "Chicken": {
+        "breakfast": 0.02,
+        "lunch": 0.733,
+        "dinner": 0.756,
+        "snack": 0.0
+      },
+      "Seafood": {
+        "breakfast": 0.02,
+        "lunch": 0.067,
+        "dinner": 0.133,
+        "snack": 0.0
+      },
+      "Pasta": {
+        "breakfast": 0.0,
+        "lunch": 0.3,
+        "dinner": 0.35,
+        "snack": 0.0
+      },
+      "Vegetarian": {
+        "breakfast": 0.1,
+        "lunch": 0.35,
+        "dinner": 0.3,
+        "snack": 0.1
+      },
+      "Vegan": {
+        "breakfast": 0.1,
+        "lunch": 0.35,
+        "dinner": 0.3,
+        "snack": 0.1
+      }
+    },
+    "category_hints_sources": "Dessert, Beef/Pork/Lamb/Goat/Chicken и Seafood взяты из опроса (q9-q12). Breakfast, Starter, Side, Pasta, Vegetarian, Vegan поставлены вручную. Категорию Miscellaneous специально не задавали: она слишком разнородна.",
+    "name_keywords": [
+      {
+        "keywords": [ "soup", "broth", "stew", "chowder", "bisque", "borscht", "borsch", "goulash" ],
+        "weights": {
+          "breakfast": 0.0,
+          "lunch": 0.311,
+          "dinner": 0.05,
+          "snack": 0.0
+        },
+        "source": "q10 soups 31.1%; остальные значения ручные"
+      },
+      {
+        "keywords": [ "salad", "slaw", "tabbouleh" ],
+        "weights": {
+          "breakfast": 0.02,
+          "lunch": 0.356,
+          "dinner": 0.267,
+          "snack": 0.045
+        },
+        "source": "q10 salads 35.6%, q11 26.7%, q12 4.5%"
+      },
+      {
+        "keywords": [ "porridge", "oatmeal", "muesli", "granola" ],
+        "weights": {
+          "breakfast": 0.419,
+          "lunch": 0.02,
+          "dinner": 0.02,
+          "snack": 0.05
+        },
+        "source": "q9 porridges and cereals 41.9%"
+      },
+      {
+        "keywords": [ "omelette", "omelet", "scrambled", "fried egg", "frittata", "poached egg", "shakshuka", "benedict" ],
+        "weights": {
+          "breakfast": 0.279,
+          "lunch": 0.03,
+          "dinner": 0.022,
+          "snack": 0.05
+        },
+        "source": "q9 eggs 27.9%"
+      },
+      {
+        "keywords": [ "cake", "cookie", "brownie", "muffin", "cheesecake", "fudge", "mousse", "pancake", "waffle", "crepe", "croissant", "donut", "doughnut", "gingerbread" ],
+        "exclude": [ "fish cake", "crab cake", "potato cake", "salmon cake", "tuna cake", "rice cake" ],
+        "weights": {
+          "breakfast": 0.14,
+          "lunch": 0.0,
+          "dinner": 0.0,
+          "snack": 0.795
+        },
+        "source": "q9 pastries and sweets 14.0%, q12 79.5%",
+        "note": "Слова tart и pudding убраны намеренно: tart бывает и сладким, и солёным (например, с козьим сыром), а pudding это и десерт, и Yorkshire pudding. Для таких блюд работают ингредиенты и категория."
+      },
+      {
+        "keywords": [ "cottage cheese", "curd", "syrniki", "yogurt", "yoghurt" ],
+        "weights": {
+          "breakfast": 0.419,
+          "lunch": 0.03,
+          "dinner": 0.333,
+          "snack": 0.523
+        },
+        "source": "q9 41.9%, q11 33.3%, q12 52.3%"
+      },
+      {
+        "keywords": [ "sandwich", "toast", "wrap", "burger", "bagel" ],
+        "weights": {
+          "breakfast": 0.395,
+          "lunch": 0.2,
+          "dinner": 0.15,
+          "snack": 0.2
+        },
+        "source": "допущение: 'light snack' в q9 это бутерброды; остальное ручное"
+      },
+      {
+        "keywords": [ "spaghetti", "lasagne", "lasagna", "pasta", "noodle", "macaroni" ],
+        "weights": {
+          "breakfast": 0.0,
+          "lunch": 0.3,
+          "dinner": 0.35,
+          "snack": 0.0
+        },
+        "source": "ручные значения"
+      },
+      {
+        "keywords": [ "dumpling", "pierogi", "pelmeni", "vareniki" ],
+        "weights": {
+          "breakfast": 0.0,
+          "lunch": 0.15,
+          "dinner": 0.15,
+          "snack": 0.0
+        },
+        "source": "q11: один свободный ответ про dumplings (1 из 45); значения ручные"
+      }
+    ],
+
+    "categories": [
+      {
+        "id": "tree_nuts",
+        "label_ru": "Древесные орехи",
+        "label_en": "Tree nuts",
+        "keywords": [
+          "almond",
+          "walnut",
+          "cashew",
+          "hazelnut",
+          "pecan",
+          "pistachio",
+          "brazil nut",
+          "macadamia",
+          "pine nut"
+        ]
+      },
+      {
+        "id": "peanuts",
+        "label_ru": "Арахис",
+        "label_en": "Peanuts",
+        "keywords": [
+          "peanut",
+          "groundnut",
+          "peanut butter",
+          "peanut flour",
+          "peanut paste"
+        ]
+      },
+      {
+        "id": "dairy",
+        "label_ru": "Молочные продукты",
+        "label_en": "Milk and dairy",
+        "keywords": [
+          "milk",
+          "cream",
+          "butter",
+          "ghee",
+          "cheese",
+          "cheddar",
+          "parmesan",
+          "mozzarella",
+          "ricotta",
+          "feta",
+          "yogurt",
+          "yoghurt",
+          "kefir",
+          "buttermilk",
+          "sour cream",
+          "condensed milk",
+          "evaporated milk",
+          "whey",
+          "casein",
+          "milk powder",
+          "skimmed milk",
+          "whole milk",
+          "cream cheese",
+          "mascarpone",
+          "cottage cheese"
+        ]
+      },
+      {
+        "id": "eggs",
+        "label_ru": "Яйца",
+        "label_en": "Eggs",
+        "keywords": [
+          "egg",
+          "egg white",
+          "egg yolk",
+          "albumin",
+          "mayonnaise"
+        ]
+      },
+      {
+        "id": "gluten",
+        "label_ru": "Глютенсодержащие злаки и продукты",
+        "label_en": "Gluten",
+        "keywords": [
+          "wheat",
+          "rye",
+          "barley",
+          "spelt",
+          "semolina",
+          "durum",
+          "bulgur",
+          "couscous",
+          "farina",
+          "wheat flour",
+          "bread flour",
+          "plain flour",
+          "all-purpose flour",
+          "breadcrumbs",
+          "panko",
+          "bread",
+          "pita",
+          "baguette",
+          "sourdough",
+          "pasta",
+          "spaghetti",
+          "macaroni",
+          "noodle",
+          "seitan",
+          "malt"
+        ]
+      },
+      {
+        "id": "seafood",
+        "label_ru": "Рыба и морепродукты",
+        "label_en": "Fish and seafood",
+        "keywords": [
+          "fish",
+          "salmon",
+          "tuna",
+          "cod",
+          "haddock",
+          "mackerel",
+          "trout",
+          "sardine",
+          "herring",
+          "anchovy",
+          "tilapia",
+          "halibut",
+          "sea bass",
+          "prawn",
+          "shrimp",
+          "crab",
+          "lobster",
+          "crayfish",
+          "mussel",
+          "clam",
+          "oyster",
+          "scallop",
+          "squid",
+          "octopus",
+          "fish sauce",
+          "fish stock",
+          "oyster sauce",
+          "shrimp paste"
+        ]
+      },
+      {
+        "id": "soy",
+        "label_ru": "Соя",
+        "label_en": "Soy",
+        "keywords": [
+          "soy",
+          "soya",
+          "soybean",
+          "tofu",
+          "tempeh",
+          "miso",
+          "edamame",
+          "soy sauce",
+          "soya sauce",
+          "soy milk",
+          "soy flour",
+          "soy protein"
+        ]
+      },
+      {
+        "id": "chicken",
+        "label_ru": "Курица (пищевое ограничение)",
+        "label_en": "Chicken restriction",
+        "keywords": [
+          "chicken",
+          "chicken breast",
+          "chicken thigh",
+          "chicken wing",
+          "chicken leg",
+          "chicken drumstick",
+          "chicken liver",
+          "chicken stock",
+          "chicken broth",
+          "chicken bouillon",
+          "chicken fat",
+          "chicken extract"
+        ]
+      }
+    ]
+
+  }
+}

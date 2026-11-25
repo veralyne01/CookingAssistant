@@ -181,11 +181,11 @@ copy /Y "$(ProjectDir)data\cookingassistant_foods.sqlite" "$(OutDir)data\cooking
   <ItemGroup>
     <None Include="CookingAssistant\CookingAssistant.vcxproj" />
     <None Include="CookingAssistant\CookingAssistant.vcxproj.filters" />
-    <None Include="CookingAssistant\meal_rules.json" />
     <None Include="CookingAssistant\profile.json" />
     <None Include="CookingAssistant\README.md" />
     <None Include="CookingAssistant\recipes.json" />
-    <None Include="CookingAssistant\survey_results.json" />
+    <None Include="meal_rules.json" />
+    <None Include="survey_results.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

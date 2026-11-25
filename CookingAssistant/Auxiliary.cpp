@@ -1,7 +1,8 @@
-#include "auxiliary.h"
+#include "Auxiliary.h"
 #include <algorithm>
 #include <cctype>
 #include <stdexcept>
+#include <sstream>
 namespace Auxiliary {
     std::string lower(std::string s) {
         for (char& c : s) c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
@@ -13,8 +14,6 @@ namespace Auxiliary {
     }
     json load_json(const std::string& filename) {
         std::ifstream file(filename);
-        std::cout << "Current directory: "
-            << std::filesystem::current_path() << '\n';
         if (!file.is_open()) {
             throw std::runtime_error("Cannot open file: " + filename);
         }
@@ -29,7 +28,7 @@ namespace Auxiliary {
         }
     }
     std::optional<std::vector<int>> parse_number_line(
-        const std::string& input,
+        std::string& input,
         int min_value,
         int max_value)
     {
@@ -69,5 +68,19 @@ namespace Auxiliary {
             return std::nullopt;
 
         return numbers;
+    }
+
+    void print_string_vector(const std::vector<std::string>& list)
+    {
+        if (list.empty())
+        {
+            std::cout << "List is empty.\n";
+            return;
+        }
+
+        for (const std::string& item : list)
+        {
+            std::cout << "- " << item << '\n';
+        }
     }
 }

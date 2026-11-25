@@ -14,8 +14,11 @@
 #include <cstdio>
 #include <string>
 #include <optional>
+#include <unordered_map>
+#include <utility>
 #include "nutrition_calculator.h"
 #include "measure_converter.h"
+#include "sqlmanager.h"
 
 using json = nlohmann::json;
 
@@ -373,7 +376,7 @@ namespace {
 namespace FoodDataCentral {
 
 
-    std::optional<Nutrition> get_nutrition(
+    std::optional<Nutrition> get_nutrition_uncached(
         const std::string& ingredient_name
     ) {
         // 1. Ключ из переменной окружения. Его нигде не печатаем.
@@ -471,21 +474,72 @@ namespace FoodDataCentral {
         }
     }
 
+    std::optional<Nutrition> get_nutrition(
+        const std::string& ingredient_name) {
+        static std::unordered_map<std::string, std::optional<Nutrition>> cache;
+        std::string key = ingredient_name;
+        std::transform(key.begin(), key.end(), key.begin(),
+                       [](unsigned char character) {
+                         return static_cast<char>(std::tolower(character));
+                       });
+        const auto cached = cache.find(key);
+        if (cached != cache.end()) {
+            return cached->second;
+        }
+        const std::optional<Nutrition> result =
+            get_nutrition_uncached(ingredient_name);
+        cache.emplace(std::move(key), result);
+        return result;
+    }
+
     void calculate_dish(Dish& dish) {
-     
+        for (Ingredient& ingredient : dish.ingredients) {
+            if (!ingredient.weight_grams.has_value()) {
+                const auto weight = MeasureConverter::get_weight(
+                    ingredient.name, ingredient.measure);
+                if (weight.has_value()) {
+                    ingredient.weight_grams = weight->grams;
+                    ingredient.weight_is_estimated = weight->estimated;
+                }
+            }
+        }
+
+        SQLManager::fill_nutrients(dish.ingredients);
+        char* api_key_buffer = nullptr;
+        size_t buffer_size = 0;
+
+        errno_t error = _dupenv_s(&api_key_buffer, &buffer_size, "FDC_API_KEY");
+
+        std::string api_key;
+
+        if (error == 0 && api_key_buffer != nullptr) {
+          api_key = api_key_buffer;
+          std::free(api_key_buffer);
+        }
+        for (Ingredient& ingredient : dish.ingredients) {
+            const bool has_nutrition =
+                ingredient.nutrition_per_100g.calories != 0.0 ||
+                ingredient.nutrition_per_100g.proteins != 0.0 ||
+                ingredient.nutrition_per_100g.fats != 0.0 ||
+                ingredient.nutrition_per_100g.carbohydrates != 0.0;
+          if (!has_nutrition && !api_key.empty()) {
+                const auto nutrition = get_nutrition(ingredient.name);
+                if (nutrition.has_value()) {
+                    ingredient.nutrition_per_100g = *nutrition;
+                }
+            }
+            if (ingredient.weight_grams.has_value() &&
+                (ingredient.nutrition_per_100g.calories != 0.0 ||
+                 ingredient.nutrition_per_100g.proteins != 0.0 ||
+                 ingredient.nutrition_per_100g.fats != 0.0 ||
+                 ingredient.nutrition_per_100g.carbohydrates != 0.0)) {
+                ingredient.nutrition_for_amount =
+                    NutritionCalculator::calculate_ingredient(
+                        *ingredient.weight_grams,
+                        ingredient.nutrition_per_100g);
+                ingredient.nutrition_calculated = true;
+            }
+        }
         NutritionCalculator::calculate_dish(dish);
-        std::cout << "\n-----------------------\n";
-
-        std::cout << "Calories: "
-            << dish.total_nutrition.calories << '\n';
-
-        std::cout << "Proteins: "
-            << dish.total_nutrition.proteins << '\n';
-
-        std::cout << "Fats: "
-            << dish.total_nutrition.fats << '\n';
-
-        std::cout << "Carbohydrates: "
-            << dish.total_nutrition.carbohydrates << '\n';
     }
 }

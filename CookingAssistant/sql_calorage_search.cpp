@@ -1,12 +1,17 @@
 #include "sqlmanager.h"
 #include "nutrition_calculator.h"
-using namespace NutritionCalculator;
+
+#include <sqlite3.h>
+
 namespace SQLManager {
 	void fill_nutrients(std::vector<Ingredient>& ingredients) {
 		sqlite3* db = nullptr;
-		int result = sqlite3_open("data/cookingassistant_foods.sqlite", &db);
+		int result = sqlite3_open_v2("data/cookingassistant_foods.sqlite", &db,
+			SQLITE_OPEN_READONLY, nullptr);
 		if (result != SQLITE_OK) {
-			std::cout << "An unexpected error occured when opening database!\n";
+			if (db != nullptr) {
+				sqlite3_close(db);
+			}
 			return;
 		}
 		for(auto& ingredient : ingredients) {
@@ -20,15 +25,18 @@ namespace SQLManager {
 				"OR LOWER(a.alias) = LOWER(?) "
 				"LIMIT 1;";
 
-			sqlite3_prepare_v2(db, sql, -1, &statement, nullptr);
+			if (sqlite3_prepare_v2(db, sql, -1, &statement, nullptr) != SQLITE_OK ||
+				statement == nullptr) {
+				if (statement != nullptr) {
+					sqlite3_finalize(statement);
+				}
+				continue;
+			}
 			sqlite3_bind_text(statement, 1, ingredient.name.c_str(), -1, SQLITE_TRANSIENT);
 			sqlite3_bind_text(statement, 2, ingredient.name.c_str(), -1, SQLITE_TRANSIENT);
 			int output = sqlite3_step(statement);
 			if (output == SQLITE_ROW)
 			{
-				const unsigned char* name =
-					sqlite3_column_text(statement, 1);
-
 				double calories =
 					sqlite3_column_double(statement, 3);
 
@@ -45,7 +53,10 @@ namespace SQLManager {
 				ingredient.nutrition_per_100g.proteins = proteins;
 				ingredient.nutrition_per_100g.fats = fats;
 				ingredient.nutrition_per_100g.carbohydrates = carbohydrates;
-				ingredient.nutrition_for_amount = NutritionCalculator::calculate_ingredient(*ingredient.weight_grams, ingredient.nutrition_per_100g);
+				if (ingredient.weight_grams.has_value()) {
+					ingredient.nutrition_for_amount = NutritionCalculator::calculate_ingredient(*ingredient.weight_grams, ingredient.nutrition_per_100g);
+					ingredient.nutrition_calculated = true;
+				}
 			}
 			sqlite3_finalize(statement);
 		}
